@@ -1,15 +1,20 @@
 {
-  "name": "tree",
+  "name": "TreeNode",
   "version": "0.0.0",
   "description": "A lightweight tree implementation",
   "main": "src/tree.js",
   "scripts": {
-    "test": "mocha -R test"
+	"pretest": "jshint **/*.js",
+    "test": "mocha -R spec"
   },
   "keywords": [
     "tree",
     "node"
   ],
   "author": "Iain McDonald",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "jshint": "^2.5.2",
+    "mocha": "^1.20.1"
+  }
 }
