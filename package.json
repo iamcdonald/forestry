@@ -1,8 +1,8 @@
 {
-  "name": "TreeNode",
+  "name": "ForestNode",
   "version": "0.0.0",
   "description": "A lightweight tree implementation",
-  "main": "src/tree.js",
+  "main": "src/ForestNode.js",
   "scripts": {
 	"pretest": "jshint **/*.js",
     "test": "mocha -R spec"
