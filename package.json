@@ -1,5 +1,5 @@
 {
-  "name": "ForestNode",
+  "name": "Forest",
   "version": "0.0.0",
   "description": "A lightweight tree implementation",
   "main": "src/ForestNode.js",
