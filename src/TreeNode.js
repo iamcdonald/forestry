@@ -1,27 +1,41 @@
 'use strict';
 
-var TreeNode = function (path, value, parent) {
-	this.path = path;
-	this.children = [];
-	this.parent = parent || null;
-	this.setValue(value);
-};
-
-TreeNode.prototype.setValue = function (value) {
-	this.value = value;
-	this.isFile = !!(this.value && !this.value.isNull());
-};
-
-TreeNode.prototype.update = function (node) {
-	this.setValue(node.value);
-};
-
-TreeNode.prototype.getName = function () {
-	var label = '.';
-	if (this.parent) {
-		label = this.path.replace(this.parent.path + '/', '');
+function breadthFirstSearch(node, id) {
+	var arr = [],
+		found = null;
+	arr.push(node);
+	while (arr.length) {
+		var t = arr.shift();
+		if (t.id === id) {
+			found = t;
+			break;
+		}
+		for (var i = 0, length = t.children.length; i < length; i++) {
+			arr.push(t.children[i]);
+		}
 	}
-	return label;
+	return found;
+}
+
+function depthFirstSearch(node, id) {
+	var found = null;
+	if (node.id === id) {
+		return node;
+	}
+	for (var i = 0,length = node.children.length; i < length; i++) {
+		found = depthFirstSearch(node.children[i], id);
+		if (found) {
+			break;
+		}
+	}
+	return found;
+}
+
+var TreeNode = function (id, value) {
+	this.id = id;
+	this.children = [];
+	this.parent = null;
+	this.value = value;
 };
 
 TreeNode.prototype.getRoot = function () {
@@ -32,70 +46,28 @@ TreeNode.prototype.getRoot = function () {
 	return node;
 };
 
-TreeNode.prototype.addNodeToTree = function (node) {
-	var root = this.getRoot(),
-		existingNode = root.findNodeByPath(node.path);
-	if (existingNode) {
-		existingNode.update(node);
-		return;
-	}
-	root.addChildNode(node);
+TreeNode.prototype.addChild = function (node) {
+	node.parent = this;
+	this.children.push(node);
+	return this;
 };
 
-TreeNode.prototype.addChildNode = function (node) {
-
-	if (!node.path.match(this.path)) {
-		//cannot add node under current node
-		throw new Error();
+TreeNode.prototype.findNodeById = function (id, BFS) {	
+	if (BFS) {
+		return breadthFirstSearch(this, id);
 	}
-
-	//find folder and add file to it
-	var path = node.path,
-		folderPath = path.replace(/\/?[^\/]*\/?$/, ''),
-		parent;
-
-	parent = this.path === folderPath ? this : this.findNodeByPath(folderPath);
-
-	if (!parent) {
-		parent = this.addChildNode(new TreeNode(folderPath));
-	}
-	parent.children.push(node);
-	node.parent = parent; 
-	return node;
-};
-
-TreeNode.prototype.findNodeByPath = function (path) {
-	var found = null;
-	if (this.path === path) {
-		return this;
-	}
-
-	this.children.some(function (node) {
-		found = node.findNodeByPath(path);
-		return !!found;
-	});
-
-	return found;
-};
-
-TreeNode.prototype.pruneRoot = function () {
-	var temp = this;
-	while (temp.children.length === 1) {
-		temp = temp.children[0];
-		temp.parent = null;
-	}
-	return temp;
+	return depthFirstSearch(this, id);
 };
 
 TreeNode.prototype.map = function (func) {
-	var copy = new TreeNode(this.path, this.value, this.parent);
-
-	this.children.forEach(function (node) {
-		copy.children.push(node.map(func));
-	});
-
 	if (typeof func !== 'function') {
-		return copy;
+		return this;
+	}
+	var copy = new TreeNode(this.id, this.value);
+	copy.parent = this.parent;
+
+	for (var i = 0, length = this.children.length; i < length; i++) {
+		copy.children.push(this.children[i].map(func));
 	}
 	return func(copy);
 };
