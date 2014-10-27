@@ -98,5 +98,17 @@ describe('ForestNode', function () {
 				assert.equal(newRoot.children[1].value, root.children[1].id.length);
 			});	
 		});
+
+		describe('reduce', function () {
+			
+			it('reduces tree using passed in function', function () {
+				function sum(acc, node) {
+					acc += node.id.length;
+					return acc;
+				}
+				assert.equal(root.reduce(0, sum), 12);
+				assert.equal(root.children[0].reduce(10, sum), 18);
+			});
+		});
 	});
 });

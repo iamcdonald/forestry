@@ -5,14 +5,12 @@ function breadthFirstSearch(node, id) {
 		found = null;
 	arr.push(node);
 	while (arr.length) {
-		var t = arr.shift();
-		if (t.id === id) {
-			found = t;
+		node = arr.shift();
+		if (node.id === id) {
+			found = node;
 			break;
 		}
-		for (var i = 0, length = t.children.length; i < length; i++) {
-			arr.push(t.children[i]);
-		}
+		arr = arr.concat(node.children);
 	}
 	return found;
 }
@@ -70,6 +68,18 @@ TreeNode.prototype.map = function (func) {
 		copy.children.push(this.children[i].map(func));
 	}
 	return func(copy);
+};
+
+TreeNode.prototype.reduce = function (acc, func) {
+	var node = this,
+		arr = [];
+	arr.push(node);
+	while (arr.length) {
+		node = arr.shift();
+		acc = func(acc, node);
+		arr = arr.concat(node.children);
+	}
+	return acc;
 };
 
 module.exports = TreeNode;
