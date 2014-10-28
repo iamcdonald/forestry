@@ -4,9 +4,9 @@
 	"description": "A lightweight tree implementation",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/iamcdonald/forest.git"
+		"url": "https://github.com/iamcdonald/forestry.git"
 	},
-	"bugs": "https://github.com/iamcdonald/forest/issues",
+	"bugs": "https://github.com/iamcdonald/forestry/issues",
 	"main": "src/ForestNode.js",
 	"scripts": {
 		"pretest": "jshint **/*.js",
