@@ -1,6 +1,6 @@
 {
 	"name": "Forest",
-	"version": "0.0.0",
+	"version": "0.1.0",
 	"description": "A lightweight tree implementation",
 	"repository": {
 		"type": "git",
@@ -14,9 +14,12 @@
 	},
 	"keywords": [
 		"tree",
-	"node"
-		],
-	"author": "Iain McDonald",
+		"node"
+	],
+	"author": {
+		"name": "Iain McDonald",
+		"email": "iain.allan.mcdonald@googlemail.com"
+	},
 	"license": "MIT",
 	"devDependencies": {
 		"jshint": "^2.5.2",
