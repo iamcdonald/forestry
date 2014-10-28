@@ -1,20 +1,25 @@
 {
-  "name": "Forest",
-  "version": "0.0.0",
-  "description": "A lightweight tree implementation",
-  "main": "src/ForestNode.js",
-  "scripts": {
-	"pretest": "jshint **/*.js",
-    "test": "mocha -R spec"
-  },
-  "keywords": [
-    "tree",
-    "node"
-  ],
-  "author": "Iain McDonald",
-  "license": "MIT",
-  "devDependencies": {
-    "jshint": "^2.5.2",
-    "mocha": "^1.20.1"
-  }
+	"name": "Forest",
+	"version": "0.0.0",
+	"description": "A lightweight tree implementation",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/iamcdonald/forest.git"
+	},
+	"bugs": "https://github.com/iamcdonald/forest/issues",
+	"main": "src/ForestNode.js",
+		"scripts": {
+			"pretest": "jshint **/*.js",
+			"test": "mocha -R spec"
+		},
+		"keywords": [
+			"tree",
+		"node"
+			],
+		"author": "Iain McDonald",
+		"license": "MIT",
+		"devDependencies": {
+			"jshint": "^2.5.2",
+			"mocha": "^1.20.1"
+		}
 }
