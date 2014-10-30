@@ -1,17 +1,17 @@
-(function (root, TreeNode) {
+(function (root, Node) {
 	
 	if (typeof module !== 'undefined') {
-		module.exports = TreeNode; 
+		module.exports = Node; 
 		return;
 	} 
 	if (typeof define === 'function' && define.amd) {
 		define(function () {
-			return TreeNode;
+			return Node;
 		});
 		return;
 	}
 	
-	root.TreeNode = TreeNode;
+	root.Forestry = Node;
 
 }(this, (function () {
 
@@ -46,14 +46,14 @@
 		return found;
 	}
 
-	var TreeNode = function (id, value) {
+	var Node = function (id, value) {
 		this.id = id;
 		this.children = [];
 		this.parent = null;
 		this.value = value;
 	};
 
-	TreeNode.prototype.getRoot = function () {
+	Node.prototype.getRoot = function () {
 		var node = this;
 		while (node.parent) {
 			node = node.parent;
@@ -61,24 +61,24 @@
 		return node;
 	};
 
-	TreeNode.prototype.addChild = function (node) {
+	Node.prototype.addChild = function (node) {
 		node.parent = this;
 		this.children.push(node);
 		return this;
 	};
 
-	TreeNode.prototype.findNodeById = function (id, BFS) {	
+	Node.prototype.findNodeById = function (id, BFS) {	
 		if (BFS) {
 			return breadthFirstSearch(this, id);
 		}
 		return depthFirstSearch(this, id);
 	};
 
-	TreeNode.prototype.map = function (func) {
+	Node.prototype.map = function (func) {
 		if (typeof func !== 'function') {
 			return this;
 		}
-		var copy = new TreeNode(this.id, this.value);
+		var copy = new Node(this.id, this.value);
 		copy.parent = this.parent;
 
 		for (var i = 0, length = this.children.length; i < length; i++) {
@@ -87,7 +87,7 @@
 		return func(copy);
 	};
 
-	TreeNode.prototype.reduce = function (acc, func) {
+	Node.prototype.reduce = function (acc, func) {
 		var node = this,
 			arr = [];
 		arr.push(node);
@@ -99,7 +99,9 @@
 		return acc;
 	};
 
-	return TreeNode;
+	return {
+		Node: Node
+	};
 
 })()));
 

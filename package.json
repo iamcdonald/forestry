@@ -7,7 +7,7 @@
 		"url": "https://github.com/iamcdonald/forestry.git"
 	},
 	"bugs": "https://github.com/iamcdonald/forestry/issues",
-	"main": "src/ForestNode.js",
+	"main": "src/Forestry.js",
 	"scripts": {
 		"pretest": "jshint **/*.js",
 		"test": "mocha -R spec"

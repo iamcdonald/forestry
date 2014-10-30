@@ -3,12 +3,12 @@
 'use strict';
 
 var assert = require('assert'),
-	ForestNode = require('../src/ForestNode');
+	Forestry = require('../src/Forestry');
 
-describe('ForestNode', function () {
+describe('Forestry.Node', function () {
 	describe('constructor', function () {
-		it('returns correctly populated ForestNode object', function () {
-			var fn = new ForestNode('id', 'value');
+		it('returns correctly populated Forestry.Node object', function () {
+			var fn = new Forestry.Node('id', 'value');
 
 			assert.equal(fn.id, 'id');
 			assert.equal(fn.value, 'value');
@@ -23,15 +23,15 @@ describe('ForestNode', function () {
 		
 		var root;
 		beforeEach(function () {
-			root = new ForestNode('a');
-			root.addChild(new ForestNode('a/1').addChild(new ForestNode('a/1/i')));
-			root.addChild(new ForestNode('a/2'));
+			root = new Forestry.Node('a');
+			root.addChild(new Forestry.Node('a/1').addChild(new Forestry.Node('a/1/i')));
+			root.addChild(new Forestry.Node('a/2'));
 		});	
 
 		describe('addChild', function () {
 
 			it('adds child and sets parent properly', function () {
-				root.addChild(new ForestNode('a/3', 'val'));
+				root.addChild(new Forestry.Node('a/3', 'val'));
 				assert.equal(root.children[2].id, 'a/3');
 				assert.equal(root.children[2].value, 'val');
 				assert.equal(root.children[2].parent.id, root.id);
