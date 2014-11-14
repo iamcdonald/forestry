@@ -1,28 +1,29 @@
 {
-	"name": "forestry",
-	"version": "0.1.0",
-	"description": "A lightweight tree implementation",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/iamcdonald/forestry.git"
-	},
-	"bugs": "https://github.com/iamcdonald/forestry/issues",
-	"main": "src/Forestry.js",
-	"scripts": {
-		"pretest": "jshint **/*.js",
-		"test": "mocha -R spec"
-	},
-	"keywords": [
-		"tree",
-		"node"
-	],
-	"author": {
-		"name": "Iain McDonald",
-		"email": "iain.allan.mcdonald@googlemail.com"
-	},
-	"license": "MIT",
-	"devDependencies": {
-		"jshint": "^2.5.2",
-		"mocha": "^1.20.1"
-	}
+  "name": "forestry",
+  "version": "0.1.0",
+  "description": "A lightweight tree implementation",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iamcdonald/forestry.git"
+  },
+  "bugs": "https://github.com/iamcdonald/forestry/issues",
+  "main": "src/Forestry.js",
+  "scripts": {
+    "pretest": "jshint **/*.js",
+    "test": "mocha -R spec"
+  },
+  "keywords": [
+    "tree",
+    "node"
+  ],
+  "author": {
+    "name": "Iain McDonald",
+    "email": "iain.allan.mcdonald@googlemail.com"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "benchmark": "^1.0.0",
+    "jshint": "^2.5.2",
+    "mocha": "^1.20.1"
+  }
 }

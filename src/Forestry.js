@@ -17,35 +17,6 @@
 
 	'use strict';
 
-	function breadthFirstSearch(node, id) {
-		var arr = [],
-			found = null;
-		arr.push(node);
-		while (arr.length) {
-			node = arr.shift();
-			if (node.id === id) {
-				found = node;
-				break;
-			}
-			arr = arr.concat(node.children);
-		}
-		return found;
-	}
-
-	function depthFirstSearch(node, id) {
-		var found = null;
-		if (node.id === id) {
-			return node;
-		}
-		for (var i = 0,length = node.children.length; i < length; i++) {
-			found = depthFirstSearch(node.children[i], id);
-			if (found) {
-				break;
-			}
-		}
-		return found;
-	}
-
 	var Node = function (id, value) {
 		this.id = id;
 		this.children = [];
@@ -68,6 +39,47 @@
 	};
 
 	Node.prototype.findNodeById = function (id, BFS) {	
+
+		function breadthFirstSearch(node, id) {
+			var arr = [[node]],
+				idx = 0,
+				intn = 0;
+			while (idx < arr.length) {
+				node = arr[idx][intn++];
+				if (node.id === id) {
+					return node;
+				}
+				if (intn >= arr[idx].length) {
+					++idx;
+					intn = 0;
+				}
+				if (node.children.length) {
+					arr[arr.length] = [].concat(node.children);
+				}
+			}
+			return null;
+		}
+
+		function depthFirstSearch(node, id) {
+			var arr = [[1, node]],
+				len = 0;
+			while(len >= 0) {
+				if (arr[len][0] >= arr[len].length) {
+					--len;
+					continue;
+				}
+				node = arr[len][arr[len][0]++];
+				if (node.id === id) {
+					return node;
+				}
+				if (node.children.length) {
+					arr[++len] = [1].concat(node.children);
+				}
+			}
+			return null;
+		}
+
+	
 		if (BFS) {
 			return breadthFirstSearch(this, id);
 		}
@@ -85,6 +97,25 @@
 			copy.children.push(this.children[i].map(func));
 		}
 		return func(copy);
+	};
+	
+	Node.prototype.mapMut = function (func) {
+		var node,
+			arr = [[1, this]],
+			len = 0,
+			count = 0;
+		while(len >= 0) {
+			if (arr[len][0] >= arr[len].length) {
+				--len;
+				continue;
+			}
+			node = arr[len][arr[len][0]++]; 
+			node.value = func(node.value);
+			if (node.children.length) {
+				arr[++len] = [1].concat(node.children);
+			}
+		}	
+		return this;		
 	};
 
 	Node.prototype.reduce = function (acc, func) {
