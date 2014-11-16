@@ -78,7 +78,6 @@
 			}
 			return null;
 		}
-
 	
 		if (BFS) {
 			return breadthFirstSearch(this, id);
@@ -86,7 +85,53 @@
 		return depthFirstSearch(this, id);
 	};
 
+	Node.prototype.clone = function () {
+		var oldNode,
+			newNode,
+			rootNode = new Node(this.id, this.value),
+			arr = [[2, rootNode].concat(this.children)],
+			len = 0,
+			count = 0;
+		while(len >= 0) {
+			if (arr[len][0] >= arr[len].length) {
+				--len;
+				continue;
+			}
+			oldNode = arr[len][arr[len][0]++]; 
+			newNode = new Node(oldNode.id, oldNode.value);
+			arr[len][1].addChild(newNode);
+			if (oldNode.children.length) {
+				arr[++len] = [2, newNode].concat(oldNode.children);
+			}
+		}	
+		return rootNode;	
+
+	};
+
+	Node.prototype.transform = function (func) {
+		var node,
+			arr = [[1, this]],
+			len = 0,
+			count = 0;
+		while(len >= 0) {
+			if (arr[len][0] >= arr[len].length) {
+				--len;
+				continue;
+			}
+			node = arr[len][arr[len][0]++]; 
+			node.value = func(node.value);
+			if (node.children.length) {
+				arr[++len] = [1].concat(node.children);
+			}
+		}	
+		return this;	
+	};
+
 	Node.prototype.map = function (func) {
+		return this.clone().transform(func);
+	};
+
+	Node.prototype.mapOld = function (func) {
 		if (typeof func !== 'function') {
 			return this;
 		}

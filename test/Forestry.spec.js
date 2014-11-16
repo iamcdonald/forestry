@@ -82,21 +82,22 @@ describe('Forestry.Node', function () {
 		describe('map', function () {
 			
 			it('passes node and children through a function and returns the result', function () {
-				function transform (node) {
-					node.value = node.id.length;
-					return node;
+				var i = 0;
+				function transform () {
+					return i++;
 				}
 				assert.equal(root.value, undefined);
 				assert.equal(root.children[0].value, undefined);
 				assert.equal(root.children[1].value, undefined);
 				var newRoot = root.map(transform);
-//				assert.equal(root.value, undefined);
-//				assert.equal(root.children[0].value, undefined);
-//				assert.equal(root.children[1].value, undefined);
+				assert.equal(root.value, undefined);
+				assert.equal(root.children[0].value, undefined);
+				assert.equal(root.children[1].value, undefined);
 
-				assert.equal(newRoot.value, root.id.length);
-				assert.equal(newRoot.children[0].value, root.children[0].id.length);
-				assert.equal(newRoot.children[1].value, root.children[1].id.length);
+				assert.equal(newRoot.value, 0);
+				assert.equal(newRoot.children[0].value, 1);
+				assert.equal(newRoot.children[0].children[0].value, 2);
+				assert.equal(newRoot.children[1].value, 3);
 			});	
 		});
 
