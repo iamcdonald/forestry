@@ -8,9 +8,9 @@ var assert = require('assert'),
 describe('Forestry.Node', function () {
 	describe('constructor', function () {
 		it('returns correctly populated Forestry.Node object', function () {
-			var fn = new Forestry.Node('id', 'value');
+			var fn = new Forestry.Node('value');
 
-			assert.equal(fn.id, 'id');
+			assert.equal(fn.id, '0');
 			assert.equal(fn.value, 'value');
 			assert.equal(fn.parent, null);
 			assert(fn.children instanceof Array);
@@ -24,15 +24,15 @@ describe('Forestry.Node', function () {
 		var root;
 		beforeEach(function () {
 			root = new Forestry.Node('a');
-			root.addChild(new Forestry.Node('a/1').addChild(new Forestry.Node('a/1/i')));
+			root.addChild(new Forestry.Node('a/1')).children[0].addChild(new Forestry.Node('a/1/i'));
 			root.addChild(new Forestry.Node('a/2'));
 		});	
 
 		describe('addChild', function () {
 
 			it('adds child and sets parent properly', function () {
-				root.addChild(new Forestry.Node('a/3', 'val'));
-				assert.equal(root.children[2].id, 'a/3');
+				root.addChild(new Forestry.Node('val'));
+				assert.equal(root.children[2].id, '0/2');
 				assert.equal(root.children[2].value, 'val');
 				assert.equal(root.children[2].parent.id, root.id);
 				assert(root.children[2].children instanceof Array);
@@ -41,36 +41,36 @@ describe('Forestry.Node', function () {
 
 		});
 
-		describe('findNodeById', function () {
+		describe('find', function () {
 
 			describe('breadth first', function () {
 				it('returns node if found', function () {
-					var found = root.findNodeById('a/2', true);
+					var found = root.find('0/1', true);
 					assert.equal(found, root.children[1]);
-					found = root.findNodeById('a/1/i', true);
+					found = root.find('0/0/0', true);
 					assert.equal(found, root.children[0].children[0]);
 				});
 
 				it('returns null if no node found', function () {
-					var found = root.findNodeById('b', true);
+					var found = root.find('bb', true);
 					assert.equal(found, null);
-					found = root.children[0].children[0].findNodeById('a/1', true);
+					found = root.children[0].children[0].find('a/1', true);
 					assert.equal(found, null);
 				});
 			});
 			
 			describe('depth first', function () {
 				it('returns node if found', function () {
-					var found = root.findNodeById('a/2', false);
+					var found = root.find('0/1');
 					assert.equal(found, root.children[1]);
-					found = root.findNodeById('a/1/i', false);
+					found = root.find('0/0/0', true);
 					assert.equal(found, root.children[0].children[0]);
 				});
 
 				it('returns null if no node found', function () {
-					var found = root.findNodeById('b', false);
+					var found = root.find('b');
 					assert.equal(found, null);
-					found = root.children[0].children[0].findNodeById('a/1', false);
+					found = root.children[0].children[0].find('a/1');
 					assert.equal(found, null);
 				});
 			});
@@ -86,13 +86,13 @@ describe('Forestry.Node', function () {
 				function transform () {
 					return i++;
 				}
-				assert.equal(root.value, undefined);
-				assert.equal(root.children[0].value, undefined);
-				assert.equal(root.children[1].value, undefined);
+				assert.equal(root.value, 'a');
+				assert.equal(root.children[0].value, 'a/1');
+				assert.equal(root.children[1].value, 'a/2');
 				var newRoot = root.map(transform);
-				assert.equal(root.value, undefined);
-				assert.equal(root.children[0].value, undefined);
-				assert.equal(root.children[1].value, undefined);
+				assert.equal(root.value, 'a');
+				assert.equal(root.children[0].value, 'a/1');
+				assert.equal(root.children[1].value, 'a/2');
 
 				assert.equal(newRoot.value, 0);
 				assert.equal(newRoot.children[0].value, 1);
@@ -104,8 +104,8 @@ describe('Forestry.Node', function () {
 		describe('reduce', function () {
 			
 			it('reduces tree using passed in function', function () {
-				function sum(acc, node) {
-					acc += node.id.length;
+				function sum(acc, val) {
+					acc += val.length;
 					return acc;
 				}
 				assert.equal(root.reduce(0, sum), 12);
