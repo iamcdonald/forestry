@@ -44,38 +44,94 @@ describe('Forestry.Node', function () {
 		describe('find', function () {
 
 			describe('breadth first', function () {
-				it('returns node if found', function () {
-					var found = root.find('0/1', true);
-					assert.equal(found, root.children[1]);
-					found = root.find('0/0/0', true);
-					assert.equal(found, root.children[0].children[0]);
-				});
+		
+				describe('pass in string', function () {
+		
+					it('returns node if found', function () {
+						var found = root.find('0/1', true);
+						assert.equal(found, root.children[1]);
+						found = root.find('0/0/0', true);
+						assert.equal(found, root.children[0].children[0]);
+					});
 
-				it('returns null if no node found', function () {
-					var found = root.find('bb', true);
-					assert.equal(found, null);
-					found = root.children[0].children[0].find('a/1', true);
-					assert.equal(found, null);
+					it('returns null if no node found', function () {
+						var found = root.find('bb', true);
+						assert.equal(found, null);
+						found = root.children[0].children[0].find('a/1', true);
+						assert.equal(found, null);
+					});
+				});
+		
+				describe('pass in function', function () {
+		
+					it('returns node if found', function () {
+						function func(val) {
+							return val === 'a/1/i';
+						}
+						var found = root.find(func, true);
+						assert.equal(found, root.children[0].children[0]);
+						
+						function funcII(val) {
+							return val.split('/').length === 2;
+						}
+						found = root.find(funcII, true);
+						assert.equal(found, root.children[0]);
+					});
+		
+					it('returns null if no node found', function () {
+						function func(val) {
+							return val.length > 20;
+						}
+						var found = root.find(func, true);
+						assert.equal(found, null);
+					});
 				});
 			});
 			
 			describe('depth first', function () {
-				it('returns node if found', function () {
-					var found = root.find('0/1');
-					assert.equal(found, root.children[1]);
-					found = root.find('0/0/0', true);
-					assert.equal(found, root.children[0].children[0]);
-				});
+		
+				describe('pass in string', function () {
+		
+					it('returns node if found', function () {
+						var found = root.find('0/1');
+						assert.equal(found, root.children[1]);
+						found = root.find('0/0/0', true);
+						assert.equal(found, root.children[0].children[0]);
+					});
 
-				it('returns null if no node found', function () {
-					var found = root.find('b');
-					assert.equal(found, null);
-					found = root.children[0].children[0].find('a/1');
-					assert.equal(found, null);
+					it('returns null if no node found', function () {
+						var found = root.find('b');
+						assert.equal(found, null);
+						found = root.children[0].children[0].find('a/1');
+						assert.equal(found, null);
+					});
+				});
+		
+				describe('pass in function', function () {
+		
+					it('returns node if found', function () {
+						function func(val) {
+							return val === 'a/1/i';
+						}
+						var found = root.find(func);
+						assert.equal(found, root.children[0].children[0]);
+						
+						function funcII(val) {
+							return val.split('/').length === 2;
+						}
+						found = root.find(funcII);
+						assert.equal(found, root.children[0]);
+					});
+		
+					it('returns null if no node found', function () {
+						function func(val) {
+							return val.length > 20;
+						}
+						var found = root.find(func);
+						assert.equal(found, null);
+					});
 				});
 			});
-			
-
 		});
 
 
