@@ -16,13 +16,51 @@
 }(this, (function () {
 
 	'use strict';
-	
-	var Node = function (value) {
+	function breadthFirstSearch(node, func) {
+		var arr = [[node]],
+		idx = 0,
+		intn = 0;
+		while (idx < arr.length) {
+			node = arr[idx][intn++];
+			if (func(node)) {
+				return node;
+			}
+			if (intn >= arr[idx].length) {
+				++idx;
+				intn = 0;
+			}
+			if (node.children.length) {
+				arr[arr.length] = [].concat(node.children);
+			}
+		}
+		return null;
+	}
+
+	function depthFirstSearch(node, func) {
+		var arr = [[1, node]],
+		len = 0;
+		while(len >= 0) {
+			if (arr[len][0] >= arr[len].length) {
+				--len;
+				continue;
+			}
+			node = arr[len][arr[len][0]++];
+			if (func(node)) {
+				return node;
+			}
+			if (node.children.length) {
+				arr[++len] = [1].concat(node.children);
+			}
+		}
+		return null;
+	}
+
+	function Node(data) {
 		this.id = '0';
 		this.children = [];
 		this.parent = null;
-		this.value = value;
-	};
+		this.data = data;
+	}
 
 	Node.prototype.getRoot = function () {
 		var node = this;
@@ -51,67 +89,23 @@
 	};
 
 	Node.prototype.find = function (term, BFS) {	
-		var func;
-
-		function breadthFirstSearch(node, func) {
-			var arr = [[node]],
-				idx = 0,
-				intn = 0;
-			while (idx < arr.length) {
-				node = arr[idx][intn++];
-				if (func(node)) {
-					return node;
-				}
-				if (intn >= arr[idx].length) {
-					++idx;
-					intn = 0;
-				}
-				if (node.children.length) {
-					arr[arr.length] = [].concat(node.children);
-				}
-			}
-			return null;
-		}
-
-		function depthFirstSearch(node, func) {
-			var arr = [[1, node]],
-				len = 0;
-			while(len >= 0) {
-				if (arr[len][0] >= arr[len].length) {
-					--len;
-					continue;
-				}
-				node = arr[len][arr[len][0]++];
-				if (func(node)) {
-					return node;
-				}
-				if (node.children.length) {
-					arr[++len] = [1].concat(node.children);
-				}
-			}
-			return null;
-		}
-	
-		if (typeof term === 'string'){
+		var func = term;
+		if (typeof term === 'string') {
 			func = function(node) {
 				return node.id === term;
 			};
-		} else {
-			func = function(node) {
-				return term(node.value);
-			};
 		}
-
+			
 		if (BFS) {
-			return breadthFirstSearch(this, func);
+			return breadthFirstSearch(this, func, false);
 		}
-		return depthFirstSearch(this, func);
+		return depthFirstSearch(this, func, false);
 	};
 
 	Node.prototype.clone = function () {
 		var oldNode,
 			newNode,
-			rootNode = new Node(this.value),
+			rootNode = new Node(this.data),
 			arr = [[2, rootNode].concat(this.children)],
 			len = 0,
 			count = 0;
@@ -121,7 +115,7 @@
 				continue;
 			}
 			oldNode = arr[len][arr[len][0]++]; 
-			newNode = new Node(oldNode.value);
+			newNode = new Node(oldNode.data);
 			arr[len][1].addChild(newNode);
 			if (oldNode.children.length) {
 				arr[++len] = [2, newNode].concat(oldNode.children);
@@ -142,7 +136,7 @@
 				continue;
 			}
 			node = arr[len][arr[len][0]++]; 
-			node.value = func(node.value);
+			node.data = func(node.data);
 			if (node.children.length) {
 				arr[++len] = [1].concat(node.children);
 			}
@@ -160,7 +154,7 @@
 		arr.push(node);
 		while (arr.length) {
 			node = arr.shift();
-			acc = func(acc, node.value);
+			acc = func(acc, node);
 			arr = arr.concat(node.children);
 		}
 		return acc;

@@ -11,7 +11,7 @@ describe('Forestry.Node', function () {
 			var fn = new Forestry.Node('value');
 
 			assert.equal(fn.id, '0');
-			assert.equal(fn.value, 'value');
+			assert.equal(fn.data, 'value');
 			assert.equal(fn.parent, null);
 			assert(fn.children instanceof Array);
 			assert.equal(fn.children.length, 0);
@@ -33,7 +33,7 @@ describe('Forestry.Node', function () {
 			it('adds child and sets parent properly', function () {
 				root.addChild(new Forestry.Node('val'));
 				assert.equal(root.children[2].id, '0/2');
-				assert.equal(root.children[2].value, 'val');
+				assert.equal(root.children[2].data, 'val');
 				assert.equal(root.children[2].parent.id, root.id);
 				assert(root.children[2].children instanceof Array);
 				assert.equal(root.children[2].children.length, 0);
@@ -65,22 +65,22 @@ describe('Forestry.Node', function () {
 				describe('pass in function', function () {
 		
 					it('returns node if found', function () {
-						function func(val) {
-							return val === 'a/1/i';
+						function func(node) {
+							return node.data === 'a/1/i';
 						}
 						var found = root.find(func, true);
 						assert.equal(found, root.children[0].children[0]);
 						
-						function funcII(val) {
-							return val.split('/').length === 2;
+						function funcII(node) {
+							return node.data.split('/').length === 2;
 						}
 						found = root.find(funcII, true);
 						assert.equal(found, root.children[0]);
 					});
 		
 					it('returns null if no node found', function () {
-						function func(val) {
-							return val.length > 20;
+						function func(node) {
+							return node.data.length > 20;
 						}
 						var found = root.find(func, true);
 						assert.equal(found, null);
@@ -110,22 +110,22 @@ describe('Forestry.Node', function () {
 				describe('pass in function', function () {
 		
 					it('returns node if found', function () {
-						function func(val) {
-							return val === 'a/1/i';
+						function func(node) {
+							return node.data === 'a/1/i';
 						}
 						var found = root.find(func);
 						assert.equal(found, root.children[0].children[0]);
 						
-						function funcII(val) {
-							return val.split('/').length === 2;
+						function funcII(node) {
+							return node.data.split('/').length === 2;
 						}
 						found = root.find(funcII);
 						assert.equal(found, root.children[0]);
 					});
 		
 					it('returns null if no node found', function () {
-						function func(val) {
-							return val.length > 20;
+						function func(node) {
+							return node.data.length > 20;
 						}
 						var found = root.find(func);
 						assert.equal(found, null);
@@ -133,7 +133,44 @@ describe('Forestry.Node', function () {
 				});
 			});
 		});
+		
+		describe('transform', function () {
+			
+			it('passes node and children through a function and returns the result', function () {
+				var i = 0;
+				function transform () {
+					return i++;
+				}
+				assert.equal(root.data, 'a');
+				assert.equal(root.children[0].data, 'a/1');
+				assert.equal(root.children[1].data, 'a/2');
+				root.transform(transform);
 
+				assert.equal(root.data, 0);
+				assert.equal(root.children[0].data, 1);
+				assert.equal(root.children[0].children[0].data, 2);
+				assert.equal(root.children[1].data, 3);
+			});	
+		});
+		
+		describe('clone', function () {
+			
+			it('returns a clone of the tree', function () {
+				var i = 0;
+				function transform () {
+					return i++;
+				}
+				assert.equal(root.data, 'a');
+				assert.equal(root.children[0].data, 'a/1');
+				assert.equal(root.children[1].data, 'a/2');
+				var clone = root.clone();
+
+				assert.notEqual(root, clone);
+				assert.notEqual(root.children[0], clone.children[0]);
+				assert.notEqual(root.children[0].children[0], clone.children[0].children[0]);
+				assert.notEqual(root.children[1], clone.children[1]);
+			});	
+		});
 
 		describe('map', function () {
 			
@@ -142,26 +179,26 @@ describe('Forestry.Node', function () {
 				function transform () {
 					return i++;
 				}
-				assert.equal(root.value, 'a');
-				assert.equal(root.children[0].value, 'a/1');
-				assert.equal(root.children[1].value, 'a/2');
+				assert.equal(root.data, 'a');
+				assert.equal(root.children[0].data, 'a/1');
+				assert.equal(root.children[1].data, 'a/2');
 				var newRoot = root.map(transform);
-				assert.equal(root.value, 'a');
-				assert.equal(root.children[0].value, 'a/1');
-				assert.equal(root.children[1].value, 'a/2');
+				assert.equal(root.data, 'a');
+				assert.equal(root.children[0].data, 'a/1');
+				assert.equal(root.children[1].data, 'a/2');
 
-				assert.equal(newRoot.value, 0);
-				assert.equal(newRoot.children[0].value, 1);
-				assert.equal(newRoot.children[0].children[0].value, 2);
-				assert.equal(newRoot.children[1].value, 3);
+				assert.equal(newRoot.data, 0);
+				assert.equal(newRoot.children[0].data, 1);
+				assert.equal(newRoot.children[0].children[0].data, 2);
+				assert.equal(newRoot.children[1].data, 3);
 			});	
 		});
 
 		describe('reduce', function () {
 			
 			it('reduces tree using passed in function', function () {
-				function sum(acc, val) {
-					acc += val.length;
+				function sum(acc, node) {
+					acc += node.data.length;
 					return acc;
 				}
 				assert.equal(root.reduce(0, sum), 12);
