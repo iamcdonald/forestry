@@ -16,50 +16,71 @@
 }(this, (function () {
 
 	'use strict';
-	function breadthFirstSearch(node, func) {
+	
+	function Node(data) {
+		this.children = [];
+		this.parent = null;
+		this.data = data;
+	}
+
+	function breadthFirstOp(node, op, collect) {
 		var arr = [[node]],
-		idx = 0,
-		intn = 0;
-		while (idx < arr.length) {
+			idx = 0,
+			intn = 0,
+			len,
+			rtn = (collect !== undefined),
+			collection = [];
+		while (idx < (len = arr.length)) {
 			node = arr[idx][intn++];
-			if (func(node)) {
-				return node;
+			if (op(node) && rtn) {
+				collection[collection.length] = node;
+				if (!collect) {
+					break;
+				}
 			}
 			if (intn >= arr[idx].length) {
 				++idx;
 				intn = 0;
 			}
 			if (node.children.length) {
-				arr[arr.length] = [].concat(node.children);
+				arr[len] = [].concat(node.children);
 			}
 		}
-		return null;
+		if (rtn) {
+			if (collect) {
+				return collection;
+			}
+			return collection.length ? collection[0] : null;
+		}
 	}
 
-	function depthFirstSearch(node, func) {
+	function depthFirstOp(node, op, collect) {
 		var arr = [[1, node]],
-		len = 0;
+			len = 0,
+			rtn = (collect !== undefined),
+			collection = [];
 		while(len >= 0) {
 			if (arr[len][0] >= arr[len].length) {
 				--len;
 				continue;
 			}
 			node = arr[len][arr[len][0]++];
-			if (func(node)) {
-				return node;
+			if (op(node) && rtn) {
+				collection[collection.length] = node;
+				if (!collect) {
+					break;	
+				}
 			}
 			if (node.children.length) {
 				arr[++len] = [1].concat(node.children);
 			}
 		}
-		return null;
-	}
-
-	function Node(data) {
-		this.id = '0';
-		this.children = [];
-		this.parent = null;
-		this.data = data;
+		if (rtn) {
+			if (collect) {
+				return collection;
+			} 
+			return collection.length ? collection[0] : null;
+		}
 	}
 
 	Node.prototype.getRoot = function () {
@@ -70,9 +91,15 @@
 		return node;
 	};
 
+	Node.prototype.climb = function (op) {
+		var node = this;
+		do {
+			op(node);
+		} while (node.parent);
+	};
+
 	Node.prototype.addChild = function (node) {
 		node.parent = this;
-		node.id = this.id + '/' + this.children.length;
 		this.children.push(node);
 		return this;
 	};
@@ -80,28 +107,79 @@
 	Node.prototype.remove = function () {
 		var children = this.parent.children;
 		this.parent.children = [];
-		for(var i = 0, len = children.length; i++ < len;) {
-			if (this.parent.children[i].id === this.id) {
-				this.parent.children[this.parent.children.length - 1] = children[i];
+		for(var i = -1, len = children.length; ++i < len;) {
+			if (children[i].data === this.data) {
+				this.parent.children[this.parent.children.length] = children[i];
 			}
 		}
 		return this;
 	};
 
 	Node.prototype.find = function (term, BFS) {	
-		var func = term;
-		if (typeof term === 'string') {
-			func = function(node) {
-				return node.id === term;
-			};
-		}
-			
 		if (BFS) {
-			return breadthFirstSearch(this, func, false);
+			return breadthFirstOp(this, term, false);
 		}
-		return depthFirstSearch(this, func, false);
+		return depthFirstOp(this, term, false);
 	};
 
+	Node.prototype.findAll = function (term, BFS) {
+		if (BFS) {
+			return breadthFirstOp(this, term, true);
+		}
+		return depthFirstOp(this, term, true);
+	};
+		
+	Node.prototype.transform = function (func, BFS) {
+		if (BFS) {
+			breadthFirstOp(this, function (node) {
+				func(node);
+			});
+			return this;
+		}
+		depthFirstOp(this, function (node) {
+			func(node);
+		});
+		return this;	
+	};
+	
+	Node.prototype.reduce = function (acc, func) {
+		var node = this,
+			arr = [];
+		arr.push(node);
+		while (arr.length) {
+			node = arr.shift();
+			acc = func(acc, node);
+			arr = arr.concat(node.children);
+		}
+		return acc;
+	};
+	
+	Node.prototype.reduce = function (acc, func, BFS) {
+		if (BFS) {
+			breadthFirstOp(this, function (node) {
+				acc = func(acc, node);
+			});
+			return acc;
+		}
+		depthFirstOp(this, function (node) {
+			acc = func(acc, node);
+		});
+		return acc;
+	};
+
+	Node.prototype.prune = function (op) {
+		if (op(this)) {
+			return null;
+		}
+		breadthFirstOp(this, function (node) {
+			if (op(node)) {
+				node.children = [];
+				node.remove();
+			}
+		});
+		return this;
+	};
+	
 	Node.prototype.clone = function () {
 		var oldNode,
 			newNode,
@@ -120,44 +198,8 @@
 			if (oldNode.children.length) {
 				arr[++len] = [2, newNode].concat(oldNode.children);
 			}
-		}	
-		return rootNode;	
-
-	};
-
-	Node.prototype.transform = function (func) {
-		var node,
-			arr = [[1, this]],
-			len = 0,
-			count = 0;
-		while(len >= 0) {
-			if (arr[len][0] >= arr[len].length) {
-				--len;
-				continue;
-			}
-			node = arr[len][arr[len][0]++]; 
-			node.data = func(node.data);
-			if (node.children.length) {
-				arr[++len] = [1].concat(node.children);
-			}
-		}	
-		return this;	
-	};
-
-	Node.prototype.map = function (func) {
-		return this.clone().transform(func);
-	};
-
-	Node.prototype.reduce = function (acc, func) {
-		var node = this,
-			arr = [];
-		arr.push(node);
-		while (arr.length) {
-			node = arr.shift();
-			acc = func(acc, node);
-			arr = arr.concat(node.children);
 		}
-		return acc;
+		return rootNode;	
 	};
 
 	return {
