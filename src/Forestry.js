@@ -24,26 +24,23 @@
 	}
 
 	function breadthFirstOp(node, op, collect) {
-		var arr = [[node]],
+		var arr = [node],
 			idx = 0,
-			intn = 0,
-			len,
+			i,
+			l,
+			len = 0,
 			rtn = (collect !== undefined),
 			collection = [];
-		while (idx < (len = arr.length)) {
-			node = arr[idx][intn++];
+		while (idx <= len) {	
+			node = arr[idx++];
 			if (op(node) && rtn) {
 				collection[collection.length] = node;
 				if (!collect) {
 					break;
 				}
 			}
-			if (intn >= arr[idx].length) {
-				++idx;
-				intn = 0;
-			}
-			if (node.children.length) {
-				arr[len] = [].concat(node.children);
+			for (i = -1, l = node.children.length; ++i < l;) {
+				arr[++len] = node.children[i];
 			}
 		}
 		if (rtn) {
@@ -55,24 +52,21 @@
 	}
 
 	function depthFirstOp(node, op, collect) {
-		var arr = [[1, node]],
-			len = 0,
+		var arr = [node],
+			i,
+			idx = 0,
 			rtn = (collect !== undefined),
 			collection = [];
-		while(len >= 0) {
-			if (arr[len][0] >= arr[len].length) {
-				--len;
-				continue;
-			}
-			node = arr[len][arr[len][0]++];
+		while(idx >= 0) {
+			node = arr[idx--];
 			if (op(node) && rtn) {
 				collection[collection.length] = node;
 				if (!collect) {
 					break;	
 				}
 			}
-			if (node.children.length) {
-				arr[++len] = [1].concat(node.children);
+			for (i = node.children.length; --i >= 0;) {
+				arr[++idx] = node.children[i];
 			}
 		}
 		if (rtn) {
