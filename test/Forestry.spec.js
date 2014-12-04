@@ -91,6 +91,70 @@ describe('Forestry.Node', function () {
 			});
 		});
 		
+		describe('findAll', function () {
+
+			describe('breadth first', function () {
+
+				it('returns node if found', function () {
+					var regex = new RegExp('a/.*');
+					function func(node) {
+						return node.data.match(regex);
+					}
+					var found = root.findAll(func, true);
+					assert.equal(found.length, 3);
+					assert.equal(found[0], root.children[0]);
+					assert.equal(found[1], root.children[1]);
+					assert.equal(found[2], root.children[0].children[0]);
+
+					function funcII(node) {
+						return node.data.split('/').length === 2;
+					}
+					found = root.findAll(funcII, true);
+					assert.equal(found.length, 2);
+					assert.equal(found[0], root.children[0]);
+					assert.equal(found[1], root.children[1]);
+				});
+
+				it('returns null if no node found', function () {
+					function func(node) {
+						return node.data.length > 20;
+					}
+					var found = root.findAll(func, true);
+					assert.equal(found.length, 0);
+				});
+			});
+			
+			describe('depth first', function () {
+		
+				it('returns node if found', function () {
+					var regex = new RegExp('a/.*');
+					function func(node) {
+						return node.data.match(regex);
+					}
+					var found = root.findAll(func);
+					assert.equal(found.length, 3);
+					assert.equal(found[0], root.children[0]);
+					assert.equal(found[1], root.children[0].children[0]);
+					assert.equal(found[2], root.children[1]);
+
+					function funcII(node) {
+						return node.data.split('/').length === 2;
+					}
+					found = root.findAll(funcII);
+					assert.equal(found.length, 2);
+					assert.equal(found[0], root.children[0]);
+					assert.equal(found[1], root.children[1]);
+				});
+
+				it('returns null if no node found', function () {
+					function func(node) {
+						return node.data.length > 20;
+					}
+					var found = root.findAll(func);
+					assert.equal(found.length, 0);
+				});
+			});
+		});
 		describe('transform', function () {
 			
 			describe('breadth first', function () {
@@ -180,19 +244,6 @@ describe('Forestry.Node', function () {
 				root.children[0].remove();
 				assert.equal(1, root.children.length);
 			});
-		});
-
-		describe('prune', function () {
-			it('removes branches of tree that meet op criteria', function () {
-				function op (node) {
-					return 'a/1'.indexOf(node.data) < 0;
-				}
-
-				var newRoot = root.prune(op);
-				assert.equal(1, newRoot.children.length);
-
-			});
-
 		});
 
 	});

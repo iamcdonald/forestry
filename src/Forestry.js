@@ -23,57 +23,35 @@
 		this.data = data;
 	}
 
-	function breadthFirstOp(node, op, collect) {
+	function breadthFirstOp(node, op) {
 		var arr = [node],
 			idx = 0,
 			i,
 			l,
-			len = 0,
-			rtn = (collect !== undefined),
-			collection = [];
+			len = 0;
 		while (idx <= len) {	
 			node = arr[idx++];
-			if (op(node) && rtn) {
-				collection[collection.length] = node;
-				if (!collect) {
-					break;
-				}
+			if (op(node) === null) {
+				break;
 			}
 			for (i = -1, l = node.children.length; ++i < l;) {
 				arr[++len] = node.children[i];
 			}
 		}
-		if (rtn) {
-			if (collect) {
-				return collection;
-			}
-			return collection.length ? collection[0] : null;
-		}
 	}
 
-	function depthFirstOp(node, op, collect) {
+	function depthFirstOp(node, op) {
 		var arr = [node],
 			i,
-			idx = 0,
-			rtn = (collect !== undefined),
-			collection = [];
+			idx = 0;
 		while(idx >= 0) {
 			node = arr[idx--];
-			if (op(node) && rtn) {
-				collection[collection.length] = node;
-				if (!collect) {
-					break;	
-				}
+			if (op(node) === null) {
+				break;	
 			}
 			for (i = node.children.length; --i >= 0;) {
 				arr[++idx] = node.children[i];
 			}
-		}
-		if (rtn) {
-			if (collect) {
-				return collection;
-			} 
-			return collection.length ? collection[0] : null;
 		}
 	}
 
@@ -89,7 +67,41 @@
 		var node = this;
 		do {
 			op(node);
-		} while (node.parent);
+		} while ((node = node.parent));
+	};
+
+	Node.prototype.index = function () {
+		var index = 0;
+		for (var i = node.parent.children.length; --i;) {
+			if (this === node.parent.children[i]) {
+				return i;
+			}
+		}
+		return null; 
+	};
+
+	Node.prototype.level = function () {
+		var level = 0;
+		this.climb(function () {
+			++level;
+		});
+		return level;
+	};
+
+	Node.prototype.previousSibling = function () {
+		var index = this.index();
+		if (index) {
+			return this.parent.children[this.index - 1];	
+		}
+		return null;
+	};
+
+	Node.prototype.nextSibling = function () {
+		var index = this.index();
+		if (index < this.parent.children.length) {
+			return this.parent.children[this.index + 1];	
+		}
+		return null;
 	};
 
 	Node.prototype.addChild = function (node) {
@@ -110,17 +122,42 @@
 	};
 
 	Node.prototype.find = function (term, BFS) {	
+		var found = null;
 		if (BFS) {
-			return breadthFirstOp(this, term, false);
+			breadthFirstOp(this, function (node) {
+				if (term(node)) {
+					found = node;
+					return null;
+				}
+			});
+			return found;
 		}
-		return depthFirstOp(this, term, false);
+		depthFirstOp(this, function (node) {
+			if (term(node)) {
+				found = node;
+				return null;
+			}
+		});
+		return found;
 	};
 
 	Node.prototype.findAll = function (term, BFS) {
+		var found = [],
+			idx = 0;
 		if (BFS) {
-			return breadthFirstOp(this, term, true);
+			breadthFirstOp(this, function (node) {
+				if (term(node)) {
+					found[idx++] = node;
+				}
+			});
+			return found;
 		}
-		return depthFirstOp(this, term, true);
+		depthFirstOp(this, function (node) {
+			if (term(node)) {
+				found[idx++] = node;
+			}
+		});
+		return found;
 	};
 		
 	Node.prototype.transform = function (func, BFS) {
@@ -136,18 +173,6 @@
 		return this;	
 	};
 	
-	Node.prototype.reduce = function (acc, func) {
-		var node = this,
-			arr = [];
-		arr.push(node);
-		while (arr.length) {
-			node = arr.shift();
-			acc = func(acc, node);
-			arr = arr.concat(node.children);
-		}
-		return acc;
-	};
-	
 	Node.prototype.reduce = function (acc, func, BFS) {
 		if (BFS) {
 			breadthFirstOp(this, function (node) {
@@ -161,19 +186,6 @@
 		return acc;
 	};
 
-	Node.prototype.prune = function (op) {
-		if (op(this)) {
-			return null;
-		}
-		breadthFirstOp(this, function (node) {
-			if (op(node)) {
-				node.children = [];
-				node.remove();
-			}
-		});
-		return this;
-	};
-	
 	Node.prototype.clone = function () {
 		var oldNode,
 			newNode,
