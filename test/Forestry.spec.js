@@ -38,6 +38,32 @@ describe('Forestry.Node', function () {
 
 		});
 
+		describe('remove', function () {
+			it('removes the node from the tree (and by association the node\'s children)', function () {
+				var temp0 = root.children[0],
+					temp1 = root.children[1],
+				    removed;
+				removed = root.children[0].remove();
+				assert.equal(root.children.length, 1);
+				assert.equal(root.children[0], temp1);
+				assert.equal(removed, temp0);
+			});
+		});
+
+		describe('level', function () {
+			it('returns the correct level of the node', function () {
+				assert.equal(root.children[1].level(), 1);
+				assert.equal(root.children[0].children[0].level(), 2);
+			});
+		});
+
+		describe('index', function () {
+			it('returns the index of the node within it\'s parents children array', function () {
+				assert.equal(root.children[1].index(), 1);
+				assert.equal(root.children[0].children[0].index(), 0);
+			});
+		});
+
 		describe('find', function () {
 
 			describe('breadth first', function () {
@@ -238,13 +264,5 @@ describe('Forestry.Node', function () {
 				});
 			});			
 		});
-
-		describe('remove', function () {
-			it('it should remove the node from the tree', function () {
-				root.children[0].remove();
-				assert.equal(1, root.children.length);
-			});
-		});
-
 	});
 });

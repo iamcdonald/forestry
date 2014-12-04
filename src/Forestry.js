@@ -71,9 +71,8 @@
 	};
 
 	Node.prototype.index = function () {
-		var index = 0;
-		for (var i = node.parent.children.length; --i;) {
-			if (this === node.parent.children[i]) {
+		for (var i = this.parent.children.length; --i >= 0;) {
+			if (this === this.parent.children[i]) {
 				return i;
 			}
 		}
@@ -81,27 +80,11 @@
 	};
 
 	Node.prototype.level = function () {
-		var level = 0;
+		var level = -1;
 		this.climb(function () {
 			++level;
 		});
 		return level;
-	};
-
-	Node.prototype.previousSibling = function () {
-		var index = this.index();
-		if (index) {
-			return this.parent.children[this.index - 1];	
-		}
-		return null;
-	};
-
-	Node.prototype.nextSibling = function () {
-		var index = this.index();
-		if (index < this.parent.children.length) {
-			return this.parent.children[this.index + 1];	
-		}
-		return null;
 	};
 
 	Node.prototype.addChild = function (node) {
@@ -114,7 +97,7 @@
 		var children = this.parent.children;
 		this.parent.children = [];
 		for(var i = -1, len = children.length; ++i < len;) {
-			if (children[i].data === this.data) {
+			if (children[i] !== this) {
 				this.parent.children[this.parent.children.length] = children[i];
 			}
 		}
