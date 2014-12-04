@@ -22,7 +22,6 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "benchmark": "^1.0.0",
     "jshint": "^2.5.2",
     "mocha": "^1.20.1"
   }
