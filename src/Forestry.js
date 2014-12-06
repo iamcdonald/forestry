@@ -23,6 +23,7 @@
 		this.data = data;
 	}
 
+
 	function breadthFirstOp(node, op) {
 		var arr = [node],
 			idx = 0,
@@ -54,20 +55,22 @@
 			}
 		}
 	}
+	
+	var TRAVERSAL_TYPES = {
+			BFS: 'BFS',
+			DFS: 'DFS'
+		},
+		traversalOptionsArr = Object.keys(TRAVERSAL_TYPES),
+		traversal = {};
+	traversal[TRAVERSAL_TYPES.BFS] = breadthFirstOp;
+	traversal[TRAVERSAL_TYPES.DFS] = depthFirstOp;
 
-	Node.prototype.getRoot = function () {
-		var node = this;
-		while (node.parent) {
-			node = node.parent;
-		}
-		return node;
+	Node.prototype.isRoot = function () {
+		return !this.parent;
 	};
 
-	Node.prototype.climb = function (op) {
-		var node = this;
-		do {
-			op(node);
-		} while ((node = node.parent));
+	Node.prototype.isLeaf = function () {
+		return this.children.length === 0;
 	};
 
 	Node.prototype.index = function () {
@@ -88,6 +91,9 @@
 	};
 
 	Node.prototype.addChild = function (node) {
+		if (!(node instanceof Node)) {
+			throw new TypeError('Passed arg must be of type Node');
+		}
 		node.parent = this;
 		this.children.push(node);
 		return this;
@@ -103,69 +109,57 @@
 		}
 		return this;
 	};
+	
+	Node.prototype.getRoot = function () {
+		var node = this;
+		while (node.parent) {
+			node = node.parent;
+		}
+		return node;
+	};
+	
+	Node.prototype.climb = function (op) {
+		var node = this;
+		do {
+			op(node);
+		} while ((node = node.parent));
+	};
+
+	Node.prototype.traverse = function (op, traversalType) {
+		traversalType = traversalType ? traversalType : TRAVERSAL_TYPES.DFS;
+		if (traversalOptionsArr.indexOf(traversalType) < 0) {
+			throw new Error('Traversal type is not valid. It must be one of ' + traversalOptionsArr.join(', ') + '.');
+		}
+		traversal[traversalType](this, op);	
+		return this;
+	};
 
 	Node.prototype.find = function (term, BFS) {	
 		var found = null;
-		if (BFS) {
-			breadthFirstOp(this, function (node) {
-				if (term(node)) {
-					found = node;
-					return null;
-				}
-			});
-			return found;
-		}
-		depthFirstOp(this, function (node) {
+		this.traverse(function (node) {
 			if (term(node)) {
 				found = node;
 				return null;
 			}
-		});
+		}, BFS);
 		return found;
 	};
 
-	Node.prototype.findAll = function (term, BFS) {
+	Node.prototype.all = function (term, BFS) {
 		var found = [],
 			idx = 0;
-		if (BFS) {
-			breadthFirstOp(this, function (node) {
-				if (term(node)) {
-					found[idx++] = node;
-				}
-			});
-			return found;
-		}
-		depthFirstOp(this, function (node) {
+	    this.traverse(function (node) {
 			if (term(node)) {
 				found[idx++] = node;
 			}
-		});
+		}, BFS);
 		return found;
 	};
 		
-	Node.prototype.transform = function (func, BFS) {
-		if (BFS) {
-			breadthFirstOp(this, function (node) {
-				func(node);
-			});
-			return this;
-		}
-		depthFirstOp(this, function (node) {
-			func(node);
-		});
-		return this;	
-	};
-	
 	Node.prototype.reduce = function (acc, func, BFS) {
-		if (BFS) {
-			breadthFirstOp(this, function (node) {
-				acc = func(acc, node);
-			});
-			return acc;
-		}
-		depthFirstOp(this, function (node) {
+		this.traverse(function (node) {
 			acc = func(acc, node);
-		});
+		}, BFS);
 		return acc;
 	};
 
@@ -192,7 +186,8 @@
 	};
 
 	return {
-		Node: Node
+		Node: Node,
+		TRAVERSAL_TYPES: TRAVERSAL_TYPES
 	};
 
 })()));
