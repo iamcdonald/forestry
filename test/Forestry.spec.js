@@ -133,7 +133,7 @@ describe('Forestry.Node', function () {
 
 			});			
 			
-			describe('depth first', function () {
+			describe('depth first - pre', function () {
 				it('passes node and children through a function and returns the result', function () {
 					var i = 0;
 					function transform (node) {
@@ -142,12 +142,30 @@ describe('Forestry.Node', function () {
 					assert.equal(root.data, 'a');
 					assert.equal(root.children[0].data, 'a/1');
 					assert.equal(root.children[1].data, 'a/2');
-					root.traverse(transform, Forestry.TRAVERSAL_TYPES.DFS);
+					root.traverse(transform, Forestry.TRAVERSAL_TYPES.DFS_PRE);
 
 					assert.equal(root.data, 0);
 					assert.equal(root.children[0].data, 1);
 					assert.equal(root.children[0].children[0].data, 2);
 					assert.equal(root.children[1].data, 3);
+				});	
+			});
+			
+			describe('depth first - post', function () {
+				it('passes node and children through a function and returns the result', function () {
+					var i = 0;
+					function transform (node) {
+						node.data = i++;
+					}
+					assert.equal(root.data, 'a');
+					assert.equal(root.children[0].data, 'a/1');
+					assert.equal(root.children[1].data, 'a/2');
+					root.traverse(transform, Forestry.TRAVERSAL_TYPES.DFS_POST);
+
+					assert.equal(root.data, 3);
+					assert.equal(root.children[0].data, 1);
+					assert.equal(root.children[0].children[0].data, 0);
+					assert.equal(root.children[1].data, 2);
 				});	
 			});
 		});
@@ -179,19 +197,19 @@ describe('Forestry.Node', function () {
 				});
 			});
 			
-			describe('depth first', function () {
+			describe('depth first - pre', function () {
 		
 				it('returns node if found', function () {
 					function func(node) {
 						return node.data === 'a/1/i';
 					}
-					var found = root.find(func, Forestry.TRAVERSAL_TYPES.DFS);
+					var found = root.find(func, Forestry.TRAVERSAL_TYPES.DFS_PRE);
 					assert.equal(found, root.children[0].children[0]);
 
 					function funcII(node) {
 						return node.data.split('/').length === 2;
 					}
-					found = root.find(funcII, Forestry.TRAVERSAL_TYPES.DFS);
+					found = root.find(funcII, Forestry.TRAVERSAL_TYPES.DFS_PRE);
 					assert.equal(found, root.children[0]);
 				});
 
@@ -199,7 +217,7 @@ describe('Forestry.Node', function () {
 					function func(node) {
 						return node.data.length > 20;
 					}
-					var found = root.find(func);
+					var found = root.find(func, Forestry.TRAVERSAL_TYPES.DFS_PRE);
 					assert.equal(found, null);
 				});
 			});
@@ -238,14 +256,14 @@ describe('Forestry.Node', function () {
 				});
 			});
 			
-			describe('depth first', function () {
+			describe('depth first - pre', function () {
 		
 				it('returns node if found', function () {
 					var regex = new RegExp('a/.*');
 					function func(node) {
 						return node.data.match(regex);
 					}
-					var found = root.all(func, Forestry.TRAVERSAL_TYPES.DFS);
+					var found = root.all(func, Forestry.TRAVERSAL_TYPES.DFS_PRE);
 					assert.equal(found.length, 3);
 					assert.equal(found[0], root.children[0]);
 					assert.equal(found[1], root.children[0].children[0]);
@@ -254,7 +272,7 @@ describe('Forestry.Node', function () {
 					function funcII(node) {
 						return node.data.split('/').length === 2;
 					}
-					found = root.all(funcII, Forestry.TRAVERSAL_TYPES.DFS);
+					found = root.all(funcII, Forestry.TRAVERSAL_TYPES.DFS_PRE);
 					assert.equal(found.length, 2);
 					assert.equal(found[0], root.children[0]);
 					assert.equal(found[1], root.children[1]);
@@ -264,7 +282,7 @@ describe('Forestry.Node', function () {
 					function func(node) {
 						return node.data.length > 20;
 					}
-					var found = root.all(func, Forestry.TRAVERSAL_TYPES.DFS);
+					var found = root.all(func, Forestry.TRAVERSAL_TYPES.DFS_PRE);
 					assert.equal(found.length, 0);
 				});
 			});
@@ -272,14 +290,14 @@ describe('Forestry.Node', function () {
 		
 		describe('reduce', function () {
 		
-			describe('depth first', function () {
+			describe('depth first - pre', function () {
 				it('reduces tree using passed in function', function () {
 					function sum(acc, node) {
 						acc += node.data.length;
 						return acc;
 					}
-					assert.equal(root.reduce(0, sum, Forestry.TRAVERSAL_TYPES.DFS), 12);
-					assert.equal(root.children[0].reduce(10, sum, Forestry.TRAVERSAL_TYPES.DFS), 18);
+					assert.equal(root.reduce(0, sum, Forestry.TRAVERSAL_TYPES.DFS_PRE), 12);
+					assert.equal(root.children[0].reduce(10, sum, Forestry.TRAVERSAL_TYPES.DFS_PRE), 18);
 				});
 			});
 

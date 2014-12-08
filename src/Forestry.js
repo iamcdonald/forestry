@@ -23,7 +23,6 @@
 		this.data = data;
 	}
 
-
 	function breadthFirstOp(node, op) {
 		var arr = [node],
 			idx = 0,
@@ -41,7 +40,7 @@
 		}
 	}
 
-	function depthFirstOp(node, op) {
+	function depthFirstOpPre(node, op) {
 		var arr = [node],
 			i,
 			idx = 0;
@@ -56,14 +55,35 @@
 		}
 	}
 	
+	function depthFirstOpPost(node, op) {
+		var arr = [node],
+			i,
+			idx = 0;
+		while (idx >= 0) {
+			node = arr[idx];
+			if ((arr[idx + 1] && arr[idx + 1].parent === node) || node.isLeaf()) {
+				--idx;
+				if (op(node) === null) {
+					break;
+				}
+				continue;
+			}
+			for (i = node.children.length; --i >= 0;) {
+				arr[++idx] = node.children[i];
+			}
+		}
+	}
+
 	var TRAVERSAL_TYPES = {
 			BFS: 'BFS',
-			DFS: 'DFS'
+			DFS_PRE: 'DFS_PRE',
+			DFS_POST: 'DFS_POST'
 		},
 		traversalOptionsArr = Object.keys(TRAVERSAL_TYPES),
 		traversal = {};
 	traversal[TRAVERSAL_TYPES.BFS] = breadthFirstOp;
-	traversal[TRAVERSAL_TYPES.DFS] = depthFirstOp;
+	traversal[TRAVERSAL_TYPES.DFS_PRE] = depthFirstOpPre;
+	traversal[TRAVERSAL_TYPES.DFS_POST] = depthFirstOpPost;
 
 	Node.prototype.isRoot = function () {
 		return !this.parent;
