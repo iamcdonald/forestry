@@ -146,7 +146,7 @@
 	};
 
 	Node.prototype.traverse = function (op, traversalType) {
-		traversalType = traversalType ? traversalType : TRAVERSAL_TYPES.DFS;
+		traversalType = traversalType ? traversalType : TRAVERSAL_TYPES.DFS_PRE;
 		if (traversalOptionsArr.indexOf(traversalType) < 0) {
 			throw new Error('Traversal type is not valid. It must be one of ' + traversalOptionsArr.join(', ') + '.');
 		}
