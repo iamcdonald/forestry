@@ -11,7 +11,7 @@
   "scripts": {
     "pretest": "jshint .",
     "test": "mocha -R spec",
-    "postinstall": "rm -rf dist && mkdir dist && browserify src/Forestry.js --s Forestry > dist/Forestry.js && uglifyjs dist/Forestry.js > dist/Forestry.min.js"
+    "build": "rm -rf dist && mkdir dist && browserify src/Forestry.js --s Forestry > dist/Forestry.js && uglifyjs dist/Forestry.js > dist/Forestry.min.js"
   },
   "keywords": [
     "tree",
