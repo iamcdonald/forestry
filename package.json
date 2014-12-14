@@ -1,7 +1,7 @@
 {
   "name": "forestry",
   "version": "0.2.0",
-  "description": "A lightweight tree implementation",
+  "description": "A lightweight javascript library for creating and manipulating trees.",
   "repository": {
     "type": "git",
     "url": "https://github.com/iamcdonald/forestry.git"
