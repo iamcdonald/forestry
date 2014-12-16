@@ -4,6 +4,7 @@ node_js:
 branches:
   except:
     - built
+    - /^v\d*\.\d*\.\d*$/
 before_script:
   - export NAME="Travis-CI"
   - git config --global user.email "--"
