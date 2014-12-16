@@ -1,12 +1,14 @@
 {
   "name": "forestry",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "homepage": "https://github.com/iamcdonald/forestry",
   "authors": [
     "Iain McDonald <iain.allan.mcdonald@googlemail.com>"
   ],
   "description": "A lightweight javascript library for creating and manipulating trees.",
-  "main": "dist/Forestry.js",
+  "main": [
+	  "dist/Forestry.js"
+  ],
   "license": "MIT",
   "ignore": [
 	"src",
