@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 if [[ "${TRAVIS_BRANCH}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
   	then 
 		echo "Publish";	
