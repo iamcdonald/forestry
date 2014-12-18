@@ -4,24 +4,7 @@ node_js:
 branches:
   except:
     - built
-    - /^v\d*\.\d*\.\d*$/
-before_script:
-  - export NAME="Travis-CI"
-  - git config --global user.email "--"
-  - git config --global user.name $NAME
-script:
-  - npm test 
-  - git checkout -b temp
-  - git config remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
-  - git fetch --all
-  - git checkout built
-  - git merge temp -m "Travis - Merging changes"
-  - npm run build
-  - git add dist -f
-  - git commit -m "Travis - Committing built assets" --allow-empty
-  - export GIT_REPO_URL=`git config --get remote.origin.url | sed 's#^.*//\(.*\)$#https://'$NAME':'$GH_TOKEN'@\1#'`
-  - git remote set-url origin $GIT_REPO_URL
-  - git push origin built > /dev/null 2>&1
+script: .travis/script.sh
 env:
   global:
     secure: ZBRGg1Qrdcn3P9meTlm1+lVK8ccROQ/ISdvAaVu+EFOPbsbSECq9yZ++XUDKhjHHdnjwomIT0ZJqIgFox3wjYkorwCzImH7N5kVW3K6cd/QZsSLXz1u/uNLEvgV9ghA97YwI0N7EkOUGNM1qjV0oDTwx1ff1nQA27HiW0yAjWgk=
