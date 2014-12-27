@@ -103,12 +103,18 @@ describe('Forestry.Node', function () {
 		describe('remove', function () {
 			it('removes the node from the tree (and by association the node\'s children)', function () {
 				var temp0 = root.children[0],
-					temp1 = root.children[1],
-				    removed;
-				removed = root.children[0].remove();
+				temp1 = root.children[1];
+				root.children[0].remove();
 				assert.equal(root.children.length, 1);
 				assert.equal(root.children[0], temp1);
-				assert.equal(removed, temp0);
+			});
+			it('returns the removed node with no parent', function () {
+				var temp = root.children[0],
+					tempParent = temp.parent,
+					removed;
+				removed = root.children[0].remove();
+				assert.equal(removed.data, temp.data);
+				assert.notEqual(removed.parent, tempParent);    
 			});
 		});
 
