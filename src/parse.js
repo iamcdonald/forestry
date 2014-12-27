@@ -57,10 +57,10 @@ function parse(obj, childrenProp, dataProp) {
 	while (len > 0) {
 		p = arr[--len];
 		childArr = asArray(p[1][childrenProp]);
-		for (var l = childArr.length; --l >= 0;) {
-			newNode = createNode(childArr[l], childrenProp, dataProp);
+		for (var i = 0, l = childArr.length; i < l; i++) {
+			newNode = createNode(childArr[i], childrenProp, dataProp);
 			p[0].addChild(newNode);
-			arr[len++] = [newNode, childArr[l]];
+			arr[len++] = [newNode, childArr[i]];
 		}
 	}
 	return rootNode;
