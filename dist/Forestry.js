@@ -124,26 +124,34 @@ Node.prototype.reduce = function (acc, func, BFS) {
 	return acc;
 };
 
-Node.prototype.clone = function () {
-	var oldNode,
-	newNode,
-	rootNode = new Node(this.data),
-		arr = [[2, rootNode].concat(this.children)],
-		len = 0,
-			count = 0;
-	while(len >= 0) {
-		if (arr[len][0] >= arr[len].length) {
-			--len;
-			continue;
-		}
-		oldNode = arr[len][arr[len][0]++]; 
-		newNode = new Node(oldNode.data);
-		arr[len][1].addChild(newNode);
-		if (oldNode.children.length) {
-			arr[++len] = [2, newNode].concat(oldNode.children);
+function cloneData(data, cloneFunc) {
+	if (typeof data.clone === 'function') {
+		return data.clone();
+	}
+	if (cloneFunc) {
+		return cloneFunc(data);
+	}
+	return data;
+}
+
+Node.prototype.clone = function (dataCloneFunc) {
+	var rootNode = new Node(cloneData(this.data, dataCloneFunc)),
+		arr = [[rootNode, this]],
+		len = 1,
+		newNode,
+		childArr,
+		p;
+		
+	while (len > 0) {
+		p = arr[--len];
+		childArr = p[1].children;
+		for (var i = 0, l = childArr.length; i < l; i++) {
+			newNode = new Node(cloneData(childArr[i].data, dataCloneFunc));
+			p[0].addChild(newNode);
+			arr[len++] = [newNode, childArr[i]];
 		}
 	}
-	return rootNode;	
+	return rootNode;
 };
 
 module.exports = Node;
@@ -209,10 +217,10 @@ function parse(obj, childrenProp, dataProp) {
 	while (len > 0) {
 		p = arr[--len];
 		childArr = asArray(p[1][childrenProp]);
-		for (var l = childArr.length; --l >= 0;) {
-			newNode = createNode(childArr[l], childrenProp, dataProp);
+		for (var i = 0, l = childArr.length; i < l; i++) {
+			newNode = createNode(childArr[i], childrenProp, dataProp);
 			p[0].addChild(newNode);
-			arr[len++] = [newNode, childArr[l]];
+			arr[len++] = [newNode, childArr[i]];
 		}
 	}
 	return rootNode;
