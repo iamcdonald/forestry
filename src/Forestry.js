@@ -1,9 +1,11 @@
 'use strict';
 
 var traversal = require('./traversal'),
-	Node = require('./Node');
+	Node = require('./Node'),
+	parse = require('./parse');
 
 module.exports = {
 	TRAVERSAL_TYPES: traversal.TYPES,
-	Node: Node
+	Node: Node,
+	parse: parse
 };
