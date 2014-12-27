@@ -2,6 +2,13 @@
 if [[ "${TRAVIS_BRANCH}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
   	then 
 		echo "Publish";	
+		export BOWER_V=`sed -n 's/.*"version":.*\([0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}\).*/\1/p' bower.json`;
+		export NPM_V=`sed -n 's/.*"version":.*\([0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}\).*/\1/p' package.json`;
+		export TAG_V=`echo "${TRAVIS_BRANCH}" | sed -n 's/v\([0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}\)/\1/p'`;
+		if [[ ${TAG_V} == ${BOWER_V} && ${TAG_V} == ${NPM_V} ]] 
+			then
+				echo "Publishing package";
+		fi
 	else
 		echo "Build";
   		npm test; 
