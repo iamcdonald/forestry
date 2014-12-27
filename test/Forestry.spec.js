@@ -60,8 +60,8 @@ describe('Forestry', function () {
 			assert.equal(node.data.name, '1');
 			assert.equal(node.data.id, 1);
 			assert.equal(node.children.length, 3);
-			assert.equal(node.children[1].data.name, '3');
-			assert.equal(node.children[1].data.id, 3);
+			assert.equal(node.children[2].data.name, '4');
+			assert.equal(node.children[2].data.id, 4);
 			assert.equal(node.children[1].children[0].data.name, '7');
 			assert.equal(node.children[1].children[0].data.id, 7);
 			node = node.find(function (n) {
@@ -114,8 +114,8 @@ describe('Forestry', function () {
 			assert.equal(node.data.name, '1');
 			assert.equal(node.data.id, 1);
 			assert.equal(node.children.length, 3);
-			assert.equal(node.children[1].data.name, '3');
-			assert.equal(node.children[1].data.id, 3);
+			assert.equal(node.children[0].data.name, '2');
+			assert.equal(node.children[0].data.id, 2);
 			assert.equal(node.children[1].data._key, 'two');
 			assert.equal(node.children[1].children[0].data.name, '7');
 			assert.equal(node.children[1].children[0].data.id, 7);
@@ -558,7 +558,95 @@ describe('Forestry', function () {
 					assert.notEqual(root.children[0], clone.children[0]);
 					assert.notEqual(root.children[0].children[0], clone.children[0].children[0]);
 					assert.notEqual(root.children[1], clone.children[1]);
+				});
+
+				it('uses clone method on node.data if available', function () {
+					function Person(age, name) {
+						this.age = age;
+						this.name = name;
+					}
+					Person.prototype.clone = function () {
+						return new Person(this.age, this.name);
+					};
+
+					var original = new Node(new Person(86, 'Magaret'))
+									.addChild(new Node(new Person(65, 'James')))
+									.addChild(new Node(new Person(62, 'Jake')))
+									.children[1].addChild(new Node(new Person(37, 'William')))
+									.parent,
+						clone = original.clone();
+
+					assert.equal(original.data.age, 86);
+					assert.equal(clone.data.age, 86);
+					original.data.age = 95;
+					assert.equal(original.data.age, 95);
+					assert.equal(clone.data.age, 86);
+
+					assert.equal(original.children[1].children[0].data.name, 'William');
+					assert.equal(clone.children[1].children[0].data.name, 'William');
+					clone.children[1].children[0].data.name = 'Jacob';
+					assert.equal(original.children[1].children[0].data.name, 'William');
+					assert.equal(clone.children[1].children[0].data.name, 'Jacob');
 				});	
+				
+				it('uses a passed in clone method if given', function () {
+					var original = new Node({age: 86, name: 'Margaret'})
+									.addChild(new Node({age: 65, name: 'James'}))
+									.addChild(new Node({age: 62, name: 'Jake'}))
+									.children[1].addChild(new Node({age: 37, name: 'William'}))
+									.parent,
+						clone = original.clone(function (data) {
+									return  {
+										age: data.age,
+										name: data.name
+									};
+								});
+					
+					assert.equal(original.data.age, 86);
+					assert.equal(clone.data.age, 86);
+					original.data.age = 95;
+					assert.equal(original.data.age, 95);
+					assert.equal(clone.data.age, 86);
+
+					assert.equal(original.children[1].children[0].data.name, 'William');
+					assert.equal(clone.children[1].children[0].data.name, 'William');
+					clone.children[1].children[0].data.name = 'Jacob';
+					assert.equal(original.children[1].children[0].data.name, 'William');
+					assert.equal(clone.children[1].children[0].data.name, 'Jacob');
+				});
+
+				it('priotises clone method over passed in function', function () {
+				
+					function Person(age, name) {
+						this.age = age;
+						this.name = name;
+					}
+					Person.prototype.clone = function () {
+						return new Person(this.age, this.name);
+					};
+
+					var original = new Node(new Person(86, 'Magaret'))
+									.addChild(new Node(new Person(65, 'James')))
+									.addChild(new Node(new Person(62, 'Jake')))
+									.children[1].addChild(new Node(new Person(37, 'William')))
+									.parent,
+						clone = original.clone(function (data) {
+							return {};
+						});
+
+					assert.equal(original.data.age, 86);
+					assert.equal(clone.data.age, 86);
+					original.data.age = 95;
+					assert.equal(original.data.age, 95);
+					assert.equal(clone.data.age, 86);
+
+					assert.equal(original.children[1].children[0].data.name, 'William');
+					assert.equal(clone.children[1].children[0].data.name, 'William');
+					clone.children[1].children[0].data.name = 'Jacob';
+					assert.equal(original.children[1].children[0].data.name, 'William');
+					assert.equal(clone.children[1].children[0].data.name, 'Jacob');
+				
+				});
 			});
 		});
 
