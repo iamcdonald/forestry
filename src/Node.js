@@ -44,14 +44,17 @@ Node.prototype.addChild = function (node) {
 };
 
 Node.prototype.remove = function () {
-	var children = this.parent.children;
-	this.parent.children = [];
-	for(var i = -1, len = children.length; ++i < len;) {
-		if (children[i] !== this) {
-			this.parent.children[this.parent.children.length] = children[i];
+	if (!this.isRoot()) {
+		var children = this.parent.children;
+		this.parent.children = [];
+		for(var i = -1, len = children.length; ++i < len;) {
+			if (children[i] !== this) {
+				this.parent.children[this.parent.children.length] = children[i];
+			}
 		}
+		this.parent = null;
 	}
-	return this;
+    return this;
 };
 
 Node.prototype.getRoot = function () {
