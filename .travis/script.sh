@@ -8,6 +8,8 @@ if [[ "${TRAVIS_BRANCH}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
 		if [[ ${TAG_V} == ${BOWER_V} && ${TAG_V} == ${NPM_V} ]] 
 			then
 				echo "Publishing package";
+				echo "//registry.npmjs.org/:_password=${NPM_TOKEN}" >> .npmrc
+				npm publish ./				
 		fi
 	else
 		echo "Build";
