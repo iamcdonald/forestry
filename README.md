@@ -12,7 +12,7 @@ $ npm install forestry
 ## API
 
 ### Forestry.TRAVERSAL_TYPES
-An enum like object that gives consumers access to the traversal types that can be passed into the traverse, find, all and reduce functions.   
+An enum like object that gives consumers access to the traversal types that can be passed into the traverse, find, all and reduce functions available on each `Node`.   
 `Forestry.TRAVERSAL_TYPES.DFS_PRE` - [Depth First Pre-order](http://en.wikipedia.org/wiki/Tree_traversal#Pre-order).  
 `Forestry.TRAVERSAL_TYPES.DFS_POST` - [Depth First Post-order](http://en.wikipedia.org/wiki/Tree_traversal#Post-order).  
 `Forestry.TRAVERSAL_TYPES.BFS` - [Breadth First](http://en.wikipedia.org/wiki/Tree_traversal#Breadth-first).  
@@ -21,27 +21,27 @@ Each node has 'public' parent, data and children properties.
 `node.parent` - the parent node of this node (`undefined` if the node is the root of the tree).  
 `node.data` - the data passed into the constructor.  
 `node.children` - an array of nodes that are children of this node (empty if the node is a leaf on the tree).
-#### Create
+#### Constructor
 Create a node with the given data.  
 ```js
 var node = new Forestry.Node(data);
 ```
-#### isRoot
+#### isRoot()
 Returns `true` if the node has no parent and `false` otherwise.
 ```js
 node.isRoot();
 ```
-#### isLeaf
+#### isLeaf()
 Returns `true` if the node has no children and `false` otherwise.
 ```js
 node.isLeaf();
 ```
-#### index
+#### index()
 Returns the placement of the node within parent's children.
 ```js
 node.index();
 ```
-#### level
+#### level()
 Returns the level of the node within the tree
 ```js
 node.level();
@@ -52,12 +52,12 @@ Returns the added node.
 ```js
 node.addChild(new Forestry.Node());
 ```
-#### remove
+#### remove()
 Remove's the node from tree and returns it.
 ```js
 node.remove();
 ```
-#### getRoot
+#### getRoot()
 Returns the root node of the tree the node exists in.
 ```js
 node.getRoot();
@@ -73,7 +73,8 @@ node.climb(function (node) {
 Traverses the tree passing each node through the given `Function`.  
 Traversal can be halted at any point by returning null from the `Function`.  
 An optional second argument can be given to select a traversal type.  
-If none is given it defaults to depth first pre-order.
+If none is given it defaults to depth first pre-order.  
+All traversal types are non-recursive.
 ```js
 node.traverse(function (node) {
 
@@ -105,13 +106,38 @@ node.reduce(initialValue, function (currentValue, node) {
 
 });
 ```
-#### clone
-Returns a clone of the tree.   
-*warning* While this makes a clone of the actual tree structure it doesn't clone the data initially used in the creation of the Forestry.Node. 
-Therefore any change to the tree will be local but any change to the `data` property of the node will be echoed across both the original and cloned tree.
+#### clone([Type: `Function`])
+Returns a clone of the tree.  
+While this makes a clone of the actual tree structure it doesn't clone the data initially used in the creation of the Forestry.Node unless the data object has a 'clone' method of it's own or a `Function` is passed in to take care of this (this could be a bespoke function or from another library e.g. lo-dash's clone/cloneDeep fuctions).  
+If no data clone function is provided (either as an argument or on each data object) any change to a cloned tree will be local but any change to the `data` property of each node will be echoed across both the cloned and original trees.  
+In some cases this may not matter (you may only want to manipulate the tree structure itself). 
 ```js
 node.clone();
 ```
+
+### Forestry.parse(Type: `Object`, [Type: `String`], [Type: `String`])
+Parse a given object to a Tree of `Node` objects.  
+Returns the root `Node` of the new tree.  
+The function will accept `Array`'s or `Object`'s (key-value maps) of child nodes. If an `Object` is found it is coerced to an `Array` and the key for each value `Object` is placed under the property `_key`.  
+The function will automatically look for children under a `children` property however an optional second argument can be passed to change this. In the example below we set it to look for child nodes under the property `links`.  
+The function will use all properties except `children` (or the second argument if one is passed) as the basis for the `data` of each node. However, an optional third argument can be passed to set that as well. In the example below we take only the `name` as the data for each node, therefore the `data` of each `Node` will equal just the `name` i.e. `data: 'Joanne'`, by default it would have been an object i.e. `data: {name: 'Joanne'}`.  
+```js
+var obj = {
+      name: 'Joanne',
+      links: [{
+        name: 'Jake'
+      }, {
+        name: 'Jason',
+        links: [{
+          name: 'Jennifer'
+        }]
+      }] 
+    },
+    rootNode = Forestry.parse(obj, 'links', 'name');
+```
+## Issues
+If you have any issues using this library or if you would like to suggest tweaks or new functionality please don't hesitate to give me a shout.  
+
 ## Contribution
 * Fork the repository.
 * run `npm install` in the project root folder to make sure you have all the dependencies needed.
