@@ -10,7 +10,7 @@ if [[ "${TRAVIS_BRANCH}" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+$ ]]
 				echo "Publishing package ${TAG_V}";
 				echo "//registry.npmjs.org/:_auth=${NPM_TOKEN}" >> ~/.npmrc
 				echo "//registry.npmjs.org/:email=iain.allan.mcdonald@googlemail.com" >> ~/.npmrc
-				npm publish ./
+				npmm publish ./
 				echo "Success"
 			else
 				echo "Publishing package ${TAG_V} failed (versions not in alignment)"				
