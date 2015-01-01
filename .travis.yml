@@ -11,4 +11,4 @@ script: ".travis/script.sh"
 env:
   global:
   - secure: ZBRGg1Qrdcn3P9meTlm1+lVK8ccROQ/ISdvAaVu+EFOPbsbSECq9yZ++XUDKhjHHdnjwomIT0ZJqIgFox3wjYkorwCzImH7N5kVW3K6cd/QZsSLXz1u/uNLEvgV9ghA97YwI0N7EkOUGNM1qjV0oDTwx1ff1nQA27HiW0yAjWgk=
-  - secure: Mx/MjDOKLD2hhF/2cRX0Tl3iQJfKecvn+OWfysY8bv1K044QCyk6M9s6CIcDHxy2syMxC/9bp68Hc6KFjsUVf3tGvbnZIYLyPP9afNCFva68nCNG8qMnikdMQeQjZnT6rtabxRbZo1Tv130QSg+D6QMybbrwCLNQ4raqMekKc3s=
+  - secure: DfCJRokQbXIBKLqil5Q1glPPoM+rzlNeRd8WIj+SRXFLAKKxH2KxuVL0rZyPns2v+auw5fUzJd+BoGwDmErCHSt9TIphi5bmHY0TSTyX+fGWAbxu/MLmwDkDYDk93rA1dGeYc4u3XFKOs33RkQ8MYi/Mzl+fiLLlI+vamABOLZY=
