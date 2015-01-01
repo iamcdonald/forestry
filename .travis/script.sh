@@ -11,6 +11,7 @@ if [[ "${TRAVIS_BRANCH}" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+$ ]]
 				echo "_auth=${NPM_TOKEN}" > ~/.npmrc
 				echo "email=iain.allan.mcdonald@googlemail.com" >> ~/.npmrc
 				npm publish ./
+				cat npm-debug.log
 				echo "Success"
 			else
 				echo "Publishing package ${TAG_V} failed (versions not in alignment)"				
