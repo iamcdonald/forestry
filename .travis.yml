@@ -4,6 +4,9 @@ node_js:
 branches:
   except:
   - built
+before_install:
+  - npm install npm -g
+  - npm -v
 script: ".travis/script.sh"
 env:
   global:
