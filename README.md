@@ -6,7 +6,8 @@ A lightweight javascript library for creating and manipulating trees.
 ## Install
 
 ```sh
-$ npm install forestry
+$ npm install forestry --save     #npm
+$ bower install forestry --save   #bower
 ```
 
 ## API
@@ -108,7 +109,7 @@ node.reduce(initialValue, function (currentValue, node) {
 ```
 #### clone([Type: `Function`])
 Returns a clone of the tree.  
-While this makes a clone of the actual tree structure it doesn't clone the data initially used in the creation of the Forestry.Node unless the data object has a 'clone' method of it's own or a `Function` is passed in to take care of this (this could be a bespoke function or from another library e.g. lo-dash's clone/cloneDeep fuctions).  
+While this makes a clone of the actual tree structure it doesn't clone the data initially used in the creation of the `Node` unless the data object has a 'clone' method of it's own or a `Function` is passed in to take care of this (this could be a bespoke function or from another library e.g. lo-dash's clone/cloneDeep fuctions).  
 If no data clone function is provided (either as an argument or on each data object) any change to a cloned tree will be local but any change to the `data` property of each node will be echoed across both the cloned and original trees.  
 In some cases this may not matter (you may only want to manipulate the tree structure itself). 
 ```js
@@ -116,11 +117,10 @@ node.clone();
 ```
 
 ### Forestry.parse(Type: `Object`, [Type: `String`], [Type: `String`])
-Parse a given object to a Tree of `Node` objects.  
-Returns the root `Node` of the new tree.  
-The function will accept `Array`'s or `Object`'s (key-value maps) of child nodes. If an `Object` is found it is coerced to an `Array` and the key for each value `Object` is placed under the property `_key`.  
-The function will automatically look for children under a `children` property however an optional second argument can be passed to change this. In the example below we set it to look for child nodes under the property `links`.  
-The function will use all properties except `children` (or the second argument if one is passed) as the basis for the `data` of each node. However, an optional third argument can be passed to set that as well. In the example below we take only the `name` as the data for each node, therefore the `data` of each `Node` will equal just the `name` i.e. `data: 'Joanne'`, by default it would have been an object i.e. `data: {name: 'Joanne'}`.  
+Parses a given object to a Tree of `Node` objects and returns the root `Node` of the new tree.  
+`Array`'s or `Object`'s (key-value maps) of child nodes will be accepted. If an `Object` is found it is coerced to an `Array` and the key for each value `Object` is placed under the property `_key`.  
+By default children are expected to reside under a `children` property however an optional second argument can be passed to change this. In the example below we tell it to look for child nodes under the property `links`.  
+All properties except `children` (or the second argument if one is passed) will be taken as the basis for the `data` of each node. However, an optional third argument can be passed to cherry pick a single property. In the example below we take only the `name` as the data for each node resulting in `data: 'Joanne'`, by default it would have been an object i.e. `data: {name: 'Joanne'}`.  
 ```js
 var obj = {
       name: 'Joanne',
