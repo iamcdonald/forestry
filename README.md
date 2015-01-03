@@ -1,4 +1,4 @@
-forestry
+forestry [![Build Status](https://travis-ci.org/iamcdonald/forestry.svg?branch=master)](https://travis-ci.org/iamcdonald/forestry)
 ===============
 
 A lightweight javascript library for creating and manipulating trees.
