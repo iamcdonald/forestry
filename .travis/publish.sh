@@ -7,6 +7,7 @@ if [[ ${TAG_V} == ${BOWER_V} && ${TAG_V} == ${NPM_V} ]]
 	then
 		echo "Publishing package ${TAG_V}";
 		echo "//registry.npmjs.org/:_password=${NPM_TOKEN}" > ~/.npmrc
+		echo "//registry.npmjs.org/:username=iamcdonald" >> ~/.npmrc
 		echo "//registry.npmjs.org/:email=iain.allan.mcdonald@googlemail.com" >> ~/.npmrc
 		npm publish ./
 		echo "Success"
