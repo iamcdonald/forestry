@@ -12,7 +12,7 @@ describe('Forestry', function () {
 	describe('TRAVERSAL_TYPES', function () {
 	
 		it('has correct TRAVERSAL_TYPES', function () {
-			assert.equal(Forestry.TRAVERSAL_TYPES, traversal.TYPES);
+			assert.deepEqual(Forestry.TRAVERSAL_TYPES, traversal.TYPES);
 		});
 
 	});
