@@ -11,7 +11,7 @@
   "scripts": {
     "pretest": "jshint .",
     "test": "mocha -R spec",
-    "build": "rm -rf dist && mkdir dist && browserify src/Forestry.js --s Forestry > dist/Forestry.js && uglifyjs dist/Forestry.js > dist/Forestry.min.js"
+    "build": "rm -rf dist && mkdir dist && browserify src/Forestry.js --s Forestry | derequire > dist/Forestry.js && uglifyjs dist/Forestry.js > dist/Forestry.min.js"
   },
   "keywords": [
     "tree",
@@ -24,8 +24,9 @@
   "license": "MIT",
   "devDependencies": {
     "browserify": "^7.0.0",
+    "derequire": "^2.0.0",
     "jshint": "^2.5.2",
-    "mocha": "^1.20.1",
+    "mocha": "^2.2.4",
     "uglify-js": "^2.4.16"
   }
 }
