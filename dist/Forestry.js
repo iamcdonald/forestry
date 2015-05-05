@@ -1,9 +1,9 @@
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.Forestry=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.Forestry=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 'use strict';
 
-var traversal = require('./traversal'),
-	Node = require('./Node'),
-	parse = require('./parse');
+var traversal = _dereq_('./traversal'),
+	Node = _dereq_('./Node'),
+	parse = _dereq_('./parse');
 
 module.exports = {
 	TRAVERSAL_TYPES: traversal.TYPES,
@@ -11,10 +11,10 @@ module.exports = {
 	parse: parse
 };
 
-},{"./Node":2,"./parse":3,"./traversal":4}],2:[function(require,module,exports){
+},{"./Node":2,"./parse":3,"./traversal":4}],2:[function(_dereq_,module,exports){
 'use strict';
 
-var traversal = require('./traversal'),
+var traversal = _dereq_('./traversal'),
 	traversalTypesArr = Object.keys(traversal.processes);
 
 function Node(data) {
@@ -157,10 +157,10 @@ Node.prototype.clone = function (dataCloneFunc) {
 module.exports = Node;
 
 
-},{"./traversal":4}],3:[function(require,module,exports){
+},{"./traversal":4}],3:[function(_dereq_,module,exports){
 'use strict';
 
-var Node = require('./Node');
+var Node = _dereq_('./Node');
 
 function createNode(obj, childrenProp, valueProp) {
 	if (valueProp) {
@@ -228,7 +228,7 @@ function parse(obj, childrenProp, dataProp) {
 
 module.exports = parse;
 
-},{"./Node":2}],4:[function(require,module,exports){
+},{"./Node":2}],4:[function(_dereq_,module,exports){
 'use strict';
 
 function breadthFirstOp(node, op) {
