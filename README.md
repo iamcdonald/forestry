@@ -1,4 +1,4 @@
-forestry [![Build Status](https://travis-ci.org/iamcdonald/forestry.svg?branch=master)](https://travis-ci.org/iamcdonald/forestry)
+forestry [![Build Status](https://travis-ci.org/iamcdonald/forestry.svg?branch=master)](https://travis-ci.org/iamcdonald/forestry) [![Coverage Status](https://coveralls.io/repos/iamcdonald/forestry/badge.svg?branch=master&service=github)](https://coveralls.io/github/iamcdonald/forestry?branch=master)
 ===============
 
 A lightweight javascript library for creating and manipulating trees.
@@ -13,7 +13,7 @@ $ bower install forestry --save   #bower
 ## API
 
 ### Forestry.TRAVERSAL_TYPES
-An enum like object that gives consumers access to the traversal types that can be passed into the traverse, find, all and reduce functions available on each `Node`.   
+An enum like object that gives consumers access to the traversal types that can be passed into the traverse, find, all and reduce functions available on each `Node`.
 `Forestry.TRAVERSAL_TYPES.DFS_PRE` - [Depth First Pre-order](http://en.wikipedia.org/wiki/Tree_traversal#Pre-order).  
 `Forestry.TRAVERSAL_TYPES.DFS_POST` - [Depth First Post-order](http://en.wikipedia.org/wiki/Tree_traversal#Post-order).  
 `Forestry.TRAVERSAL_TYPES.BFS` - [Breadth First](http://en.wikipedia.org/wiki/Tree_traversal#Breadth-first).  
@@ -111,7 +111,7 @@ node.reduce(initialValue, function (currentValue, node) {
 Returns a clone of the tree.  
 While this makes a clone of the actual tree structure it doesn't clone the data initially used in the creation of the `Node` unless the data object has a 'clone' method of it's own or a `Function` is passed in to take care of this (this could be a bespoke function or from another library e.g. lo-dash's clone/cloneDeep fuctions).  
 If no data clone function is provided (either as an argument or on each data object) any change to a cloned tree will be local but any change to the `data` property of each node will be echoed across both the cloned and original trees.  
-In some cases this may not matter (you may only want to manipulate the tree structure itself). 
+In some cases this may not matter (you may only want to manipulate the tree structure itself).
 ```js
 node.clone();
 ```
@@ -131,7 +131,7 @@ var obj = {
         links: [{
           name: 'Jennifer'
         }]
-      }] 
+      }]
     },
     rootNode = Forestry.parse(obj, 'links', 'name');
 ```
