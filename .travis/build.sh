@@ -1,6 +1,8 @@
 #!/bin/bash
 echo "Build";
-npm test; 
+npm test || exit 1;
+npm install coveralls
+cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
 export NAME="Travis-CI"
 git config --global user.email "--"
 git config --global user.name $NAME
@@ -15,4 +17,3 @@ git commit -m "Travis - Committing built assets" --allow-empty;
 export GIT_REPO_URL=`git config --get remote.origin.url | sed 's#^.*//\(.*\)$#https://'$NAME':'$GH_TOKEN'@\1#'`;
 git remote set-url origin $GIT_REPO_URL;
 git push origin built > /dev/null 2>&1;
-
