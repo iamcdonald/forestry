@@ -37,7 +37,7 @@ Node.prototype.index = function () {
 			return i;
 		}
 	}
-	return null; 
+	return null;
 };
 
 Node.prototype.level = function () {
@@ -91,36 +91,36 @@ Node.prototype.traverse = function (op, traversalType) {
 	if (traversalTypesArr.indexOf(traversalType) < 0) {
 		throw new Error('Traversal type is not valid. It must be one of ' + traversalTypesArr.join(', ') + '.');
 	}
-	traversal.processes[traversalType](this, op);	
+	traversal.processes[traversalType](this, op);
 	return this;
 };
 
-Node.prototype.find = function (term, BFS) {	
+Node.prototype.find = function (term, TRAVERSAL_TYPE) {
 	var found = null;
 	this.traverse(function (node) {
 		if (term(node)) {
 			found = node;
 			return null;
 		}
-	}, BFS);
+	}, TRAVERSAL_TYPE);
 	return found;
 };
 
-Node.prototype.all = function (term, BFS) {
+Node.prototype.all = function (term, TRAVERSAL_TYPE) {
 	var found = [],
 	idx = 0;
 	this.traverse(function (node) {
 		if (term(node)) {
 			found[idx++] = node;
 		}
-	}, BFS);
+	}, TRAVERSAL_TYPE);
 	return found;
 };
 
-Node.prototype.reduce = function (acc, func, BFS) {
+Node.prototype.reduce = function (acc, func, TRAVERSAL_TYPE) {
 	this.traverse(function (node) {
 		acc = func(acc, node);
-	}, BFS);
+	}, TRAVERSAL_TYPE);
 	return acc;
 };
 
@@ -141,7 +141,7 @@ Node.prototype.clone = function (dataCloneFunc) {
 		newNode,
 		childArr,
 		p;
-		
+
 	while (len > 0) {
 		p = arr[--len];
 		childArr = p[1].children;
@@ -155,7 +155,6 @@ Node.prototype.clone = function (dataCloneFunc) {
 };
 
 module.exports = Node;
-
 
 },{"./traversal":4}],3:[function(_dereq_,module,exports){
 'use strict';
