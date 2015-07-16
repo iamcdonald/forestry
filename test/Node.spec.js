@@ -254,6 +254,42 @@ describe('Node', function () {
 			});
 		});
 
+		describe('map', function () {
+
+			it('maps each node adding children to array if returned object is not an instance of Node', function () {
+				function checkObj(obj, data) {
+					assert.equal(obj.aka, data);
+					assert.equal(obj.parent, undefined);
+					assert.equal(obj.traverse, undefined);
+				}
+
+				var mappedTree = root.map(function (n) {
+									return {
+										aka: '!' + n.data
+									};
+								});
+				checkObj(mappedTree, '!' + root.data);
+				checkObj(mappedTree.children[0], '!' + root.children[0].data);
+				checkObj(mappedTree.children[0].children[0], '!' + root.children[0].children[0].data);
+				checkObj(mappedTree.children[1], '!' + root.children[1].data);
+			});
+
+			it('maps each node adding children using addChild if returned object is an instance of Node', function () {
+				function checkObj(obj, data, parent) {
+					assert.equal(obj.data, data);
+					assert.deepEqual(obj.parent, parent);
+					assert.equal(typeof obj.traverse, 'function');
+				}
+
+				var mappedTree = root.map(function (n) {
+									return new Node('!!' + n.data);
+								});
+				checkObj(mappedTree, '!!' + root.data, null);
+				checkObj(mappedTree.children[0], '!!' + root.children[0].data, mappedTree);
+				checkObj(mappedTree.children[0].children[0], '!!' + root.children[0].children[0].data, mappedTree.children[0]);
+				checkObj(mappedTree.children[1], '!!' + root.children[1].data, mappedTree);
+			});
+		});
 
 		describe('clone', function () {
 
@@ -361,6 +397,7 @@ describe('Node', function () {
 
 			});
 		});
+
 	});
 
 });

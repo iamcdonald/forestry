@@ -110,6 +110,27 @@ Node.prototype.reduce = function (acc, func, TRAVERSAL_TYPE) {
 	return acc;
 };
 
+Node.prototype.map = function (func) {
+	var mapped = this.traverse(function (node) {
+			node._temp = func(node);
+			var isNode = node._temp instanceof Node;
+			if (!isNode) {
+				node._temp.children = [];
+			}
+			for (var i = 0, l = node.children.length; i < l; i++) {
+				if (isNode) {
+					node._temp.addChild(node.children[i]._temp);
+				} else {
+					node._temp.children.push(node.children[i]._temp);
+				}
+				delete node.children[i]._temp;
+			}
+		}, traversal.TYPES.DFS_POST)._temp;
+	delete this._temp;
+	return mapped;
+
+};
+
 function cloneData(data, cloneFunc) {
 	if (typeof data.clone === 'function') {
 		return data.clone();
@@ -121,23 +142,10 @@ function cloneData(data, cloneFunc) {
 }
 
 Node.prototype.clone = function (dataCloneFunc) {
-	var rootNode = new Node(cloneData(this.data, dataCloneFunc)),
-		arr = [[rootNode, this]],
-		len = 1,
-		newNode,
-		childArr,
-		p;
-
-	while (len > 0) {
-		p = arr[--len];
-		childArr = p[1].children;
-		for (var i = 0, l = childArr.length; i < l; i++) {
-			newNode = new Node(cloneData(childArr[i].data, dataCloneFunc));
-			p[0].addChild(newNode);
-			arr[len++] = [newNode, childArr[i]];
-		}
-	}
-	return rootNode;
+	return this.map(function (node) {
+		return new Node(cloneData(node.data, dataCloneFunc));
+	});
 };
+
 
 module.exports = Node;
