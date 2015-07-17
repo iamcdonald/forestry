@@ -110,6 +110,17 @@ Node.prototype.reduce = function (acc, func, TRAVERSAL_TYPE) {
 	return acc;
 };
 
+Node.prototype.filter = function (term) {
+	return this.clone().traverse(function (node) {
+		if (!term(node)) {
+			console.log('before remove');
+			node.remove();
+			console.log('after remove');
+			node.children.length = 0;
+		}
+	});
+};
+
 Node.prototype.map = function (func) {
 	var mapped = this.traverse(function (node) {
 			node._temp = func(node);

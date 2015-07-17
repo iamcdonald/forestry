@@ -291,6 +291,27 @@ describe('Node', function () {
 			});
 		});
 
+		describe('filter', function () {
+			it('does not affect original tree', function () {
+				var clone = root.clone(),
+					filtered = root.filter(function (node) {
+									return !/a\/1/.test(node.data);
+								});
+				assert.equal(clone.data, root.data);
+				assert.equal(clone.children[0].data, root.children[0].data);
+				assert.equal(clone.children[0].children[0].data, root.children[0].children[0].data);
+				assert.equal(clone.children[1].data, root.children[1].data);
+			});
+
+			it('returns tree with nodes (and by association their children) not matching predicate filtered out', function () {
+				var filtered = root.filter(function (node) {
+									return /a(?!\/1)/.test(node.data);
+								});
+				assert.equal(filtered.children.length, 1);
+				assert.equal(filtered.children[0].data, root.children[1].data);
+			});
+		});
+
 		describe('clone', function () {
 
 			it('returns a clone of the tree', function () {
