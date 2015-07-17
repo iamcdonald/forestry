@@ -82,22 +82,26 @@ describe('Node', function () {
 				assert.equal(root.children[2].children.length, 0);
 			});
 
-			it('throws error if passed in arg is not of type Node', function () {
-				assert.throws(function () {
-					root.addChild('wrong!');
-				}, TypeError, 'Passed arg must be of type Node');
-				assert.throws(function () {
-					root.addChild(123);
-				}, TypeError, 'Passed arg must be of type Node');
-				assert.throws(function () {
-					root.addChild({});
-				}, TypeError, 'Passed arg must be of type Node');
-				assert.throws(function () {
-					root.addChild(null);
-				}, TypeError, 'Passed arg must be of type Node');
-				assert.throws(function () {
-					root.addChild(undefined);
-				}, TypeError, 'Passed arg must be of type Node');
+			it('wraps passed argument in Node if it isn\'t of type Node', function () {
+				root.addChild('val');
+				assert.equal(root.children[2].data, 'val');
+				assert(root.children[2].children instanceof Array);
+				assert.equal(root.children[2].children.length, 0);
+			});
+		});
+
+		describe('addChildren', function () {
+			it('adds multiple children', function () {
+				root.addChildren(['val', new Node('val2'), 'val3']);
+				assert.equal(root.children[2].data, 'val');
+				assert(root.children[2].children instanceof Array);
+				assert.equal(root.children[2].children.length, 0);
+				assert.equal(root.children[3].data, 'val2');
+				assert(root.children[3].children instanceof Array);
+				assert.equal(root.children[3].children.length, 0);
+				assert.equal(root.children[4].data, 'val3');
+				assert(root.children[4].children instanceof Array);
+				assert.equal(root.children[4].children.length, 0);
 			});
 		});
 
@@ -254,6 +258,63 @@ describe('Node', function () {
 			});
 		});
 
+		describe('map', function () {
+
+			it('maps each node adding children to array if returned object is not an instance of Node', function () {
+				function checkObj(obj, data) {
+					assert.equal(obj.aka, data);
+					assert.equal(obj.parent, undefined);
+					assert.equal(obj.traverse, undefined);
+				}
+
+				var mappedTree = root.map(function (n) {
+									return {
+										aka: '!' + n.data
+									};
+								});
+				checkObj(mappedTree, '!' + root.data);
+				checkObj(mappedTree.children[0], '!' + root.children[0].data);
+				checkObj(mappedTree.children[0].children[0], '!' + root.children[0].children[0].data);
+				checkObj(mappedTree.children[1], '!' + root.children[1].data);
+			});
+
+			it('maps each node adding children using addChild if returned object is an instance of Node', function () {
+				function checkObj(obj, data, parent) {
+					assert.equal(obj.data, data);
+					assert.deepEqual(obj.parent, parent);
+					assert.equal(typeof obj.traverse, 'function');
+				}
+
+				var mappedTree = root.map(function (n) {
+									return new Node('!!' + n.data);
+								});
+				checkObj(mappedTree, '!!' + root.data, null);
+				checkObj(mappedTree.children[0], '!!' + root.children[0].data, mappedTree);
+				checkObj(mappedTree.children[0].children[0], '!!' + root.children[0].children[0].data, mappedTree.children[0]);
+				checkObj(mappedTree.children[1], '!!' + root.children[1].data, mappedTree);
+			});
+		});
+
+		describe('filter', function () {
+			it('does not affect original tree', function () {
+				var clone = root.clone(),
+					filtered = root.filter(function (node) {
+									return !/a\/1/.test(node.data);
+								});
+				assert.equal(clone.data, root.data);
+				assert.equal(clone.children[0].data, root.children[0].data);
+				assert.equal(clone.children[0].children[0].data, root.children[0].children[0].data);
+				assert.equal(clone.children[1].data, root.children[1].data);
+			});
+
+			it('returns tree with nodes (and by association their children) not matching predicate filtered out', function () {
+				var filtered = root.filter(function (node) {
+									return /a(?!\/1)/.test(node.data);
+								});
+				assert.equal(filtered.children.length, 1);
+				assert.equal(filtered.children[0].data, root.children[1].data);
+			});
+		});
 
 		describe('clone', function () {
 
@@ -361,6 +422,7 @@ describe('Node', function () {
 
 			});
 		});
+
 	});
 
 });

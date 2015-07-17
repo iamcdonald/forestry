@@ -2,11 +2,11 @@
 
 function breadthFirstOp(node, op) {
 	var arr = [node],
-	idx = 0,
-	i,
+		idx = 0,
+		i,
 		l,
 		len = 0;
-	while (idx <= len) {	
+	while (idx <= len) {
 		node = arr[idx++];
 		if (op(node) === null) {
 			break;
@@ -19,12 +19,12 @@ function breadthFirstOp(node, op) {
 
 function depthFirstOpPre(node, op) {
 	var arr = [node],
-	i,
-	idx = 0;
+		i,
+		idx = 0;
 	while(idx >= 0) {
 		node = arr[idx--];
 		if (op(node) === null) {
-			break;	
+			break;
 		}
 		for (i = node.children.length; --i >= 0;) {
 			arr[++idx] = node.children[i];
@@ -34,12 +34,14 @@ function depthFirstOpPre(node, op) {
 
 function depthFirstOpPost(node, op) {
 	var arr = [node],
-	i,
-	idx = 0;
+		lastParent,
+		i,
+		idx = 0;
 	while (idx >= 0) {
 		node = arr[idx];
-		if ((arr[idx + 1] && arr[idx + 1].parent === node) || node.isLeaf()) {
+		if (lastParent === node || node.isLeaf()) {
 			--idx;
+			lastParent = node.parent;
 			if (op(node) === null) {
 				break;
 			}
