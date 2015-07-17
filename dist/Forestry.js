@@ -50,10 +50,17 @@ Node.prototype.level = function () {
 
 Node.prototype.addChild = function (node) {
 	if (!(node instanceof Node)) {
-		throw new TypeError('Passed arg must be of type Node');
+		node = new Node(node);
 	}
 	node.parent = this;
 	this.children.push(node);
+	return this;
+};
+
+Node.prototype.addChildren = function (nodes) {
+	for (var i = 0, l = nodes.length; i < l; i++) {
+		this.addChild(nodes[i]);
+	}
 	return this;
 };
 
@@ -124,6 +131,36 @@ Node.prototype.reduce = function (acc, func, TRAVERSAL_TYPE) {
 	return acc;
 };
 
+Node.prototype.filter = function (term) {
+	return this.clone().traverse(function (node) {
+		if (!term(node)) {
+			node.remove();
+			node.children.length = 0;
+		}
+	}, traversal.TYPES.DFS_POST);
+};
+
+Node.prototype.map = function (func) {
+	var mapped = this.traverse(function (node) {
+			node._temp = func(node);
+			var isNode = node._temp instanceof Node;
+			if (!isNode) {
+				node._temp.children = [];
+			}
+			for (var i = 0, l = node.children.length; i < l; i++) {
+				if (isNode) {
+					node._temp.addChild(node.children[i]._temp);
+				} else {
+					node._temp.children.push(node.children[i]._temp);
+				}
+				delete node.children[i]._temp;
+			}
+		}, traversal.TYPES.DFS_POST)._temp;
+	delete this._temp;
+	return mapped;
+
+};
+
 function cloneData(data, cloneFunc) {
 	if (typeof data.clone === 'function') {
 		return data.clone();
@@ -135,24 +172,11 @@ function cloneData(data, cloneFunc) {
 }
 
 Node.prototype.clone = function (dataCloneFunc) {
-	var rootNode = new Node(cloneData(this.data, dataCloneFunc)),
-		arr = [[rootNode, this]],
-		len = 1,
-		newNode,
-		childArr,
-		p;
-
-	while (len > 0) {
-		p = arr[--len];
-		childArr = p[1].children;
-		for (var i = 0, l = childArr.length; i < l; i++) {
-			newNode = new Node(cloneData(childArr[i].data, dataCloneFunc));
-			p[0].addChild(newNode);
-			arr[len++] = [newNode, childArr[i]];
-		}
-	}
-	return rootNode;
+	return this.map(function (node) {
+		return new Node(cloneData(node.data, dataCloneFunc));
+	});
 };
+
 
 module.exports = Node;
 
@@ -232,11 +256,11 @@ module.exports = parse;
 
 function breadthFirstOp(node, op) {
 	var arr = [node],
-	idx = 0,
-	i,
+		idx = 0,
+		i,
 		l,
 		len = 0;
-	while (idx <= len) {	
+	while (idx <= len) {
 		node = arr[idx++];
 		if (op(node) === null) {
 			break;
@@ -249,12 +273,12 @@ function breadthFirstOp(node, op) {
 
 function depthFirstOpPre(node, op) {
 	var arr = [node],
-	i,
-	idx = 0;
+		i,
+		idx = 0;
 	while(idx >= 0) {
 		node = arr[idx--];
 		if (op(node) === null) {
-			break;	
+			break;
 		}
 		for (i = node.children.length; --i >= 0;) {
 			arr[++idx] = node.children[i];
@@ -264,12 +288,14 @@ function depthFirstOpPre(node, op) {
 
 function depthFirstOpPost(node, op) {
 	var arr = [node],
-	i,
-	idx = 0;
+		lastParent,
+		i,
+		idx = 0;
 	while (idx >= 0) {
 		node = arr[idx];
-		if ((arr[idx + 1] && arr[idx + 1].parent === node) || node.isLeaf()) {
+		if (lastParent === node || node.isLeaf()) {
 			--idx;
+			lastParent = node.parent;
 			if (op(node) === null) {
 				break;
 			}
