@@ -36,10 +36,17 @@ Node.prototype.level = function () {
 
 Node.prototype.addChild = function (node) {
 	if (!(node instanceof Node)) {
-		throw new TypeError('Passed arg must be of type Node');
+		node = new Node(node);
 	}
 	node.parent = this;
 	this.children.push(node);
+	return this;
+};
+
+Node.prototype.addChildren = function (nodes) {
+	for (var i = 0, l = nodes.length; i < l; i++) {
+		this.addChild(nodes[i]);
+	}
 	return this;
 };
 

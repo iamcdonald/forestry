@@ -82,22 +82,26 @@ describe('Node', function () {
 				assert.equal(root.children[2].children.length, 0);
 			});
 
-			it('throws error if passed in arg is not of type Node', function () {
-				assert.throws(function () {
-					root.addChild('wrong!');
-				}, TypeError, 'Passed arg must be of type Node');
-				assert.throws(function () {
-					root.addChild(123);
-				}, TypeError, 'Passed arg must be of type Node');
-				assert.throws(function () {
-					root.addChild({});
-				}, TypeError, 'Passed arg must be of type Node');
-				assert.throws(function () {
-					root.addChild(null);
-				}, TypeError, 'Passed arg must be of type Node');
-				assert.throws(function () {
-					root.addChild(undefined);
-				}, TypeError, 'Passed arg must be of type Node');
+			it('wraps passed argument in Node if it isn\'t of type Node', function () {
+				root.addChild('val');
+				assert.equal(root.children[2].data, 'val');
+				assert(root.children[2].children instanceof Array);
+				assert.equal(root.children[2].children.length, 0);
+			});
+		});
+
+		describe('addChildren', function () {
+			it('adds multiple children', function () {
+				root.addChildren(['val', new Node('val2'), 'val3']);
+				assert.equal(root.children[2].data, 'val');
+				assert(root.children[2].children instanceof Array);
+				assert.equal(root.children[2].children.length, 0);
+				assert.equal(root.children[3].data, 'val2');
+				assert(root.children[3].children instanceof Array);
+				assert.equal(root.children[3].children.length, 0);
+				assert.equal(root.children[4].data, 'val3');
+				assert(root.children[4].children instanceof Array);
+				assert.equal(root.children[4].children.length, 0);
 			});
 		});
 
