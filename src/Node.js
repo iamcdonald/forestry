@@ -120,12 +120,10 @@ Node.prototype.reduce = function (acc, func, TRAVERSAL_TYPE) {
 Node.prototype.filter = function (term) {
 	return this.clone().traverse(function (node) {
 		if (!term(node)) {
-			console.log('before remove');
 			node.remove();
-			console.log('after remove');
 			node.children.length = 0;
 		}
-	});
+	}, traversal.TYPES.DFS_POST);
 };
 
 Node.prototype.map = function (func) {
