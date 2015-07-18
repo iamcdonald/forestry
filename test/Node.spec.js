@@ -80,7 +80,7 @@ describe('Node', function () {
 
 			it('returns null if node doesn\'t exist in parents children array', function () {
 				var node = new Node();
-				node.parent = new Node().addChildren('a', 'b');
+				node.parent = new Node().addChild('a', 'b');
 				assert.equal(node.index(), null);
 			});
 		});
@@ -104,7 +104,7 @@ describe('Node', function () {
 
 		describe('addChildren', function () {
 			it('adds multiple children', function () {
-				root.addChildren(['val', new Node('val2'), 'val3']);
+				root.addChild(['val', new Node('val2'), 'val3']);
 				assert.equal(root.children[2].data, 'val');
 				assert(root.children[2].children instanceof Array);
 				assert.equal(root.children[2].children.length, 0);
