@@ -32,6 +32,9 @@ Node.prototype.isLeaf = function () {
 };
 
 Node.prototype.index = function () {
+	if (!this.parent) {
+		return null;
+	}
 	for (var i = this.parent.children.length; --i >= 0;) {
 		if (this === this.parent.children[i]) {
 			return i;
@@ -176,7 +179,6 @@ Node.prototype.clone = function (dataCloneFunc) {
 		return new Node(cloneData(node.data, dataCloneFunc));
 	});
 };
-
 
 module.exports = Node;
 
