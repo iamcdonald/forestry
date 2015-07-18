@@ -289,6 +289,22 @@ describe('Node', function () {
 				checkObj(mappedTree.children[1], '!' + root.children[1].data);
 			});
 
+			it('maps each node wrapping returned value, if primtive, as object and adding children to array', function () {
+				function checkObj(obj, data) {
+					assert.equal(obj.data, data);
+					assert.equal(obj.parent, undefined);
+					assert.equal(obj.traverse, undefined);
+				}
+
+				var mappedTree = root.map(function (n) {
+									return '!' + n.data;
+								});
+				checkObj(mappedTree, '!' + root.data);
+				checkObj(mappedTree.children[0], '!' + root.children[0].data);
+				checkObj(mappedTree.children[0].children[0], '!' + root.children[0].children[0].data);
+				checkObj(mappedTree.children[1], '!' + root.children[1].data);
+			});
+
 			it('maps each node adding children using addChild if returned object is an instance of Node', function () {
 				function checkObj(obj, data, parent) {
 					assert.equal(obj.data, data);
