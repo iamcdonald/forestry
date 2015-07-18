@@ -51,18 +51,16 @@ Node.prototype.level = function () {
 	return level;
 };
 
-Node.prototype.addChild = function (node) {
-	if (!(node instanceof Node)) {
-		node = new Node(node);
-	}
-	node.parent = this;
-	this.children.push(node);
-	return this;
-};
-
-Node.prototype.addChildren = function (nodes) {
+Node.prototype.addChild = function () {
+	var nodes = Array.isArray(arguments[0]) ? arguments[0] : Array.prototype.slice.call(arguments),
+		node;
 	for (var i = 0, l = nodes.length; i < l; i++) {
-		this.addChild(nodes[i]);
+		node = nodes[i];
+		if (!(node instanceof Node)) {
+			node = new Node(node);
+		}
+		node.parent = this;
+		this.children.push(node);
 	}
 	return this;
 };
