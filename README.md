@@ -47,11 +47,15 @@ Returns the level of the node within the tree
 ```js
 node.level();
 ```
-#### addChild(Type: `Node`)
-Adds the given node as a child.  
+#### addChild(Type: `Any` [, val2 [, val3 [, valX]]])
+Adds the given Node/s (if the arguments are not of type Node each is first wrapped) as children.
+Arguments can be provided as an array or series of arguments.  
 Returns the added node.
 ```js
-node.addChild(new Forestry.Node());
+node.addChild(new Forestry.Node('1'));
+node.addChild('some data');
+node.addChild([new Forestry.Node({}), 'data']);
+node.addChild('some', 'data', new Forestry.Node(12345));
 ```
 #### remove()
 Remove's the node from tree and returns it.
@@ -96,6 +100,16 @@ Returns an empty array if no nodes match the predicate.
 As it utilises the traverse function an optional second argument can be passed to select traversal type.
 ```js
 node.all(function (node) {
+
+});
+```
+#### map (Type: `Function`)
+Replaces each node with the return value of the passed `Function`. Returns the new 'mapped' tree.  
+If the function returns a value of type `Node` already processed child nodes are added using `addChild`.  
+If an `Object` is returned a `children` property is added to the object which is then an array populated with already processed child nodes.  
+If a `non-object` is returned it is wrapped in an object under a `data` property and processed child nodes are added to a `children` property as above.
+```js
+node.map(function (node) {
 
 });
 ```
