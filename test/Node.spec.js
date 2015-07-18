@@ -1,10 +1,11 @@
-/* global describe, it, beforeEach, before */
+/* global describe, it, beforeEach, afterEach, before */
 
 'use strict';
 
 var assert = require('assert'),
 	Node = require('../src/Node'),
-    traversal = require('../src/traversal');
+    traversal = require('../src/traversal'),
+	sinon = require('sinon');
 
 
 describe('Node', function () {
@@ -71,6 +72,17 @@ describe('Node', function () {
 				assert.equal(root.children[1].index(), 1);
 				assert.equal(root.children[0].children[0].index(), 0);
 			});
+
+			it('returns null if node doesn\'t have a parent', function () {
+				var node = new Node();
+				assert.equal(node.index(), null);
+			});
+
+			it('returns null if node doesn\'t exist in parents children array', function () {
+				var node = new Node();
+				node.parent = new Node().addChildren('a', 'b');
+				assert.equal(node.index(), null);
+			});
 		});
 
 		describe('addChild', function () {
@@ -124,72 +136,71 @@ describe('Node', function () {
 		});
 
 		describe('traverse', function () {
+
+			var i = 0;
+			function transform (node) {
+				node.data = i++;
+			}
+
+			beforeEach(function () {
+				sinon.stub(traversal.processes, traversal.TYPES.BFS);
+				sinon.stub(traversal.processes, traversal.TYPES.DFS_PRE);
+				sinon.stub(traversal.processes, traversal.TYPES.DFS_POST);
+			});
+
+			afterEach(function () {
+				traversal.processes[traversal.TYPES.BFS].restore();
+				traversal.processes[traversal.TYPES.DFS_PRE].restore();
+				traversal.processes[traversal.TYPES.DFS_POST].restore();
+			});
+
 			it('defaults to depth first - pre', function () {
-				var i = 0;
-				function transform (node) {
-					node.data = i++;
-				}
 				root.traverse(transform);
 
-				assert.equal(root.data, 0);
-				assert.equal(root.children[0].data, 1);
-				assert.equal(root.children[0].children[0].data, 2);
-				assert.equal(root.children[1].data, 3);
+				assert.equal(traversal.processes[traversal.TYPES.DFS_PRE].callCount, 1);
+				assert.equal(traversal.processes[traversal.TYPES.DFS_PRE].args[0][0], root);
+				assert.equal(traversal.processes[traversal.TYPES.DFS_PRE].args[0][1].toString(), transform.toString());
+
 			});
 
 			describe('breadth first', function () {
 				it('processes nodes in the correct order', function () {
-					var i = 0;
-					function transform (node) {
-						node.data = i++;
-					}
-					assert.equal(root.data, 'a');
-					assert.equal(root.children[0].data, 'a/1');
-					assert.equal(root.children[1].data, 'a/2');
 					root.traverse(transform, traversal.TYPES.BFS);
 
-					assert.equal(root.data, 0);
-					assert.equal(root.children[0].data, 1);
-					assert.equal(root.children[1].data, 2);
-					assert.equal(root.children[0].children[0].data, 3);
+					assert.equal(traversal.processes[traversal.TYPES.BFS].callCount, 1);
+					assert.equal(traversal.processes[traversal.TYPES.BFS].args[0][0], root);
+					assert.equal(traversal.processes[traversal.TYPES.BFS].args[0][1].toString(), transform.toString());
+
 				});
 
 			});
 
 			describe('depth first - pre', function () {
 				it('processes nodes in the correct order', function () {
-					var i = 0;
-					function transform (node) {
-						node.data = i++;
-					}
-					assert.equal(root.data, 'a');
-					assert.equal(root.children[0].data, 'a/1');
-					assert.equal(root.children[1].data, 'a/2');
 					root.traverse(transform, traversal.TYPES.DFS_PRE);
 
-					assert.equal(root.data, 0);
-					assert.equal(root.children[0].data, 1);
-					assert.equal(root.children[0].children[0].data, 2);
-					assert.equal(root.children[1].data, 3);
+					assert.equal(traversal.processes[traversal.TYPES.DFS_PRE].callCount, 1);
+					assert.equal(traversal.processes[traversal.TYPES.DFS_PRE].args[0][0], root);
+					assert.equal(traversal.processes[traversal.TYPES.DFS_PRE].args[0][1].toString(), transform.toString());
+
 				});
 			});
 
 			describe('depth first - post', function () {
 				it('processes nodes in correct order', function () {
-					var i = 0;
-					function transform (node) {
-						node.data = i++;
-					}
-					assert.equal(root.data, 'a');
-					assert.equal(root.children[0].data, 'a/1');
-					assert.equal(root.children[1].data, 'a/2');
 					root.traverse(transform, traversal.TYPES.DFS_POST);
 
-					assert.equal(root.data, 3);
-					assert.equal(root.children[0].data, 1);
-					assert.equal(root.children[0].children[0].data, 0);
-					assert.equal(root.children[1].data, 2);
+					assert.equal(traversal.processes[traversal.TYPES.DFS_POST].callCount, 1);
+					assert.equal(traversal.processes[traversal.TYPES.DFS_POST].args[0][0], root);
+					assert.equal(traversal.processes[traversal.TYPES.DFS_POST].args[0][1].toString(), transform.toString());
+
 				});
+			});
+
+			it('throws an error if traversal type is not legit', function () {
+				assert.throws(function () {
+					root.traverse(transform, 'WRONG');
+				}, Error, 'Traversal type is not valid. It must be one of ' + Object.keys(traversal.TYPES).join(', ') + '.');
 			});
 		});
 
