@@ -132,6 +132,11 @@ Node.prototype.map = function (func) {
 			node._temp = func(node);
 			var isNode = node._temp instanceof Node;
 			if (!isNode) {
+				if (node._temp !== Object(node._temp)) {
+					node._temp = {
+						data: node._temp
+					};
+				}
 				node._temp.children = [];
 			}
 			for (var i = 0, l = node.children.length; i < l; i++) {
