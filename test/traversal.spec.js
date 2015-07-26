@@ -1,4 +1,4 @@
-/* global describe, it, beforeEach, before, xdescribe */
+/* global describe, it, beforeEach */
 
 'use strict';
 
@@ -86,7 +86,7 @@ describe('traversal', function () {
 					return null;
 				}
 			});
-			
+
 			assert.equal(root.data, 0);
 			assert.equal(root.children[0].data, 1);
 			assert.equal(root.children[0].children[0].data, 2);

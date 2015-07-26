@@ -1,4 +1,4 @@
-/* global describe, it, beforeEach, afterEach, before */
+/* global describe, it, beforeEach, afterEach */
 
 'use strict';
 
@@ -119,8 +119,7 @@ describe('Node', function () {
 
 		describe('remove', function () {
 			it('removes the node from the tree (and by association the node\'s children)', function () {
-				var temp0 = root.children[0],
-				temp1 = root.children[1];
+				var temp1 = root.children[1];
 				root.children[0].remove();
 				assert.equal(root.children.length, 1);
 				assert.equal(root.children[0], temp1);
@@ -324,10 +323,10 @@ describe('Node', function () {
 
 		describe('filter', function () {
 			it('does not affect original tree', function () {
-				var clone = root.clone(),
-					filtered = root.filter(function (node) {
-									return !/a\/1/.test(node.data);
-								});
+				var clone = root.clone();
+				root.filter(function (node) {
+					return !/a\/1/.test(node.data);
+				});
 				assert.equal(clone.data, root.data);
 				assert.equal(clone.children[0].data, root.children[0].data);
 				assert.equal(clone.children[0].children[0].data, root.children[0].children[0].data);
@@ -431,7 +430,7 @@ describe('Node', function () {
 								.addChild(new Node(new Person(62, 'Jake')))
 								.children[1].addChild(new Node(new Person(37, 'William')))
 								.parent,
-					clone = original.clone(function (data) {
+					clone = original.clone(function () {
 						return {};
 					});
 
