@@ -2,9 +2,13 @@
 
 var Node = require('./Node');
 
-function createNode(obj, childrenProp, valueProp) {
-	if (valueProp) {
-		return new Node(obj[valueProp]);
+function isObject(obj) {
+	return (obj instanceof Object) && !(obj instanceof Array);
+}
+
+function createNode(obj, childrenProp, dataProp) {
+	if (dataProp) {
+		return new Node(obj[dataProp]);
 	}
 	var data = {},
 		objKeys = Object.keys(obj);
@@ -13,12 +17,17 @@ function createNode(obj, childrenProp, valueProp) {
 			data[objKeys[i]] = obj[objKeys[i]];
 		}
 	}
-	return new Node(data); 
+	return new Node(data);
 }
 
 function asArray(children) {
-	if (children) {
+ 	if (children) {
 		if (children.constructor === Array) {
+			for (var j = 0; j < children.length; j++) {
+				if (!isObject(children[j])) {
+					throw new TypeError('Each child must be of type \'object\'');
+				}
+			}
 			return children;
 		}
 		if (typeof children === 'object') {
@@ -26,7 +35,7 @@ function asArray(children) {
 				keys = Object.keys(children);
 			for(var i = 0, l = keys.length; i < l; i++) {
 				if (children.hasOwnProperty(keys[i])) {
-					if (typeof children[keys[i]] !== 'object' || children[keys[i]].constructor === Array) {
+					if (!isObject(children[keys[i]])) {
 						throw new TypeError('Each child must be of type \'object\'');
 					}
 					childrenArr[i] = children[keys[i]];
@@ -51,7 +60,7 @@ function parse(obj, childrenProp, dataProp) {
 		newNode,
 		childArr,
 		p;
-		
+
 	childrenProp = childrenProp || 'children';
 
 	while (len > 0) {
@@ -65,5 +74,6 @@ function parse(obj, childrenProp, dataProp) {
 	}
 	return rootNode;
 }
+
 
 module.exports = parse;
