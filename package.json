@@ -12,7 +12,7 @@
     "pretest": "jshint .",
     "test-old": "istanbul cover _mocha -- -R spec --recursive test/ && npm run test-es6",
     "test": "nyc babel-tape-runner test/**.spec.es6 | tap-spec",
-    "coverage": "nyc report --reporter=lcov | coveralls",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
     "build": "rm -rf dist && mkdir dist && browserify src/Forestry.js --s Forestry | derequire > dist/Forestry.js && uglifyjs dist/Forestry.js > dist/Forestry.min.js"
   },
   "keywords": [
