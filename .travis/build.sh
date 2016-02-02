@@ -1,8 +1,7 @@
 #!/bin/bash
 echo "Build";
 npm test || exit 1;
-npm install coveralls
-cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+npm run coverage
 export NAME="Travis-CI"
 git config --global user.email "--"
 git config --global user.name $NAME
