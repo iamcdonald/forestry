@@ -4,10 +4,9 @@ import traversal from '../src/traversal';
 
 tape('traversal', t => {
 
-	let i,
-		root;
-	const transform = node => {
+	const transform = i => node => {
 			node.data = i++;
+			return i;
 		},
 		assertRootInitialValue = t => {
 			t.equal(root.data, 'a');
@@ -16,19 +15,19 @@ tape('traversal', t => {
 			t.equal(root.children[0].children[0].data, 'a/1/i');
 		},
 		setup = () => {
-			i = 0;
 			root = new Node('a');
 			root.addChild(new Node('a/1')).children[0].addChild(new Node('a/1/i'));
 			root.addChild(new Node('a/2'));
+			return root;
 		};
 
 	t.test('breadth first', t => {
 
 		t.test('processes nodes in the correct order', t => {
 			t.plan(8);
-			setup();
+			let root = setup();
 			assertRootInitialValue(t);
-			traversal.processes[traversal.TYPES.BFS](root, transform);
+			traversal.processes[traversal.TYPES.BFS](root, transform(0));
 			t.equal(root.data, 0);
 			t.equal(root.children[0].data, 1);
 			t.equal(root.children[1].data, 2);
@@ -37,11 +36,11 @@ tape('traversal', t => {
 
 		t.test('halts traversal when passed function returns null', t => {
 			t.plan(8);
-			setup();
+			let root = setup(),
+				trans = transform(0);
 			assertRootInitialValue(t);
-			traversal.processes[traversal.TYPES.BFS](root, function (node) {
-				transform(node);
-				if (i === 3) {
+			traversal.processes[traversal.TYPES.BFS](root, node => {
+				if (trans(node) === 3) {
 					return null;
 				}
 			});
@@ -57,9 +56,9 @@ tape('traversal', t => {
 
 		t.test('processes nodes in the correct order', t => {
 			t.plan(8);
-			setup();
+			let root = setup();
 			assertRootInitialValue(t);
-			traversal.processes[traversal.TYPES.DFS_PRE](root, transform);
+			traversal.processes[traversal.TYPES.DFS_PRE](root, transform(0));
 			t.equal(root.data, 0);
 			t.equal(root.children[0].data, 1);
 			t.equal(root.children[0].children[0].data, 2);
@@ -68,11 +67,11 @@ tape('traversal', t => {
 
 		t.test('halts traversal when passed function returns null', t => {
 			t.plan(8);
-			setup();
+			let root = setup(),
+				trans = transform(0);
 			assertRootInitialValue(t);
-			traversal.processes[traversal.TYPES.DFS_PRE](root, function (node) {
-				transform(node);
-				if (i === 3) {
+			traversal.processes[traversal.TYPES.DFS_PRE](root, node => {
+				if (trans(node) === 3) {
 					return null;
 				}
 			});
@@ -88,9 +87,9 @@ tape('traversal', t => {
 
 		t.test('processes nodes in the correct order', t => {
 			t.plan(8);
-			setup();
+			let root = setup();
 			assertRootInitialValue(t);
-			traversal.processes[traversal.TYPES.DFS_POST](root, transform);
+			traversal.processes[traversal.TYPES.DFS_POST](root, transform(0));
 			t.equal(root.data, 3);
 			t.equal(root.children[0].data, 1);
 			t.equal(root.children[0].children[0].data, 0);
@@ -99,11 +98,11 @@ tape('traversal', t => {
 
 		t.test('halts traversal when passed function returns null', t => {
 			t.plan(8);
-			setup();
+			let root = setup(),
+				trans = transform(0);
 			assertRootInitialValue(t);
-			traversal.processes[traversal.TYPES.DFS_POST](root, function (node) {
-				transform(node);
-				if (i === 3) {
+			traversal.processes[traversal.TYPES.DFS_POST](root, node => {
+				if (trans(node) === 3) {
 					return null;
 				}
 			});
