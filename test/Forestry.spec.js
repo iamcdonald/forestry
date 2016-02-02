@@ -1,33 +1,24 @@
-/* global describe, it, beforeEach */
+import tape from 'tape';
+import Forestry from '../src/Forestry';
+import traversal from '../src/traversal';
+import parse from '../src/parse';
+import Node from '../src/Node';
 
-'use strict';
+tape('Forestry', t => {
 
-var assert = require('assert'),
-	proxyquire = require('proxyquire').noCallThru();
-
-describe('Forestry', function () {
-
-	var testee,
-		stubs = {};
-	beforeEach(function () {
-		stubs['./traversal'] = {
-			TYPES: ['1', '2']
-		};
-		stubs['./Node'] = 'Node';
-		stubs['./parse'] = 'parse';
-		testee = proxyquire('../src/Forestry', stubs);
+	t.test('has correct TRAVERSAL_TYPES', t => {
+		t.plan(1);
+		t.deepEqual(Forestry.TRAVERSAL_TYPES, traversal.TYPES);
 	});
 
-	it('has correct TRAVERSAL_TYPES', function () {
-		assert.deepEqual(testee.TRAVERSAL_TYPES, stubs['./traversal'].TYPES);
+	t.test('has reference to parse module', t => {
+		t.plan(1);
+		t.deepEqual(Forestry.parse, parse);
 	});
 
-	it('has reference to parse module', function () {
-		assert.equal(testee.parse, stubs['./parse']);
-	});
-
-	it('has reference to Node module', function () {
-		assert.equal(testee.Node, stubs['./Node']);
+	t.test('has reference to Node module', t => {
+		t.plan(1);
+		t.deepEqual(Forestry.Node, Node);
 	});
 
 });
