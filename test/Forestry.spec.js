@@ -1,6 +1,6 @@
 import tape from 'tape';
-import Forestry from '../src/Forestry';
-import traversal from '../src/traversal';
+import * as Forestry from '../src/Forestry';
+import { TYPES } from '../src/traversal';
 import parse from '../src/parse';
 import Node from '../src/Node';
 
@@ -8,7 +8,7 @@ tape('Forestry', t => {
 
 	t.test('has correct TRAVERSAL_TYPES', t => {
 		t.plan(1);
-		t.deepEqual(Forestry.TRAVERSAL_TYPES, traversal.TYPES);
+		t.deepEqual(Forestry.TRAVERSAL_TYPES, TYPES);
 	});
 
 	t.test('has reference to parse module', t => {

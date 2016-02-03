@@ -1,7 +1,7 @@
 import tape from 'tape';
 import sinon from 'sinon';
 import Node from '../src/Node';
-import traversal from '../src/traversal';
+import * as traversal from '../src/traversal';
 
 tape('Node', t => {
 
@@ -283,8 +283,8 @@ tape('Node', t => {
 			t.plan(2);
 			let root = setup();
 			const sum = (acc, node) => acc + node.data.length;
-			t.equal(root.reduce(0, sum), 12);
-			t.equal(root.children[0].reduce(10, sum), 18);
+			t.equal(root.reduce(sum, 0), 12);
+			t.equal(root.children[0].reduce(sum, 10), 18);
 		});
 	});
 
