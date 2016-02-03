@@ -8,16 +8,14 @@ tape('traversal', t => {
 			node.data = i++;
 			return i;
 		},
-		assertRootInitialValue = t => {
+		setup = t => {
+			let root = new Node('a');
+			root.addChild(new Node('a/1')).children[0].addChild(new Node('a/1/i'));
+			root.addChild(new Node('a/2'));
 			t.equal(root.data, 'a');
 			t.equal(root.children[0].data, 'a/1');
 			t.equal(root.children[1].data, 'a/2');
 			t.equal(root.children[0].children[0].data, 'a/1/i');
-		},
-		setup = () => {
-			root = new Node('a');
-			root.addChild(new Node('a/1')).children[0].addChild(new Node('a/1/i'));
-			root.addChild(new Node('a/2'));
 			return root;
 		};
 
@@ -25,8 +23,7 @@ tape('traversal', t => {
 
 		t.test('processes nodes in the correct order', t => {
 			t.plan(8);
-			let root = setup();
-			assertRootInitialValue(t);
+			let root = setup(t);
 			traversal.processes[traversal.TYPES.BFS](root, transform(0));
 			t.equal(root.data, 0);
 			t.equal(root.children[0].data, 1);
@@ -36,9 +33,8 @@ tape('traversal', t => {
 
 		t.test('halts traversal when passed function returns null', t => {
 			t.plan(8);
-			let root = setup(),
+			let root = setup(t),
 				trans = transform(0);
-			assertRootInitialValue(t);
 			traversal.processes[traversal.TYPES.BFS](root, node => {
 				if (trans(node) === 3) {
 					return null;
@@ -56,8 +52,7 @@ tape('traversal', t => {
 
 		t.test('processes nodes in the correct order', t => {
 			t.plan(8);
-			let root = setup();
-			assertRootInitialValue(t);
+			let root = setup(t);
 			traversal.processes[traversal.TYPES.DFS_PRE](root, transform(0));
 			t.equal(root.data, 0);
 			t.equal(root.children[0].data, 1);
@@ -67,9 +62,8 @@ tape('traversal', t => {
 
 		t.test('halts traversal when passed function returns null', t => {
 			t.plan(8);
-			let root = setup(),
+			let root = setup(t),
 				trans = transform(0);
-			assertRootInitialValue(t);
 			traversal.processes[traversal.TYPES.DFS_PRE](root, node => {
 				if (trans(node) === 3) {
 					return null;
@@ -87,8 +81,7 @@ tape('traversal', t => {
 
 		t.test('processes nodes in the correct order', t => {
 			t.plan(8);
-			let root = setup();
-			assertRootInitialValue(t);
+			let root = setup(t);
 			traversal.processes[traversal.TYPES.DFS_POST](root, transform(0));
 			t.equal(root.data, 3);
 			t.equal(root.children[0].data, 1);
@@ -98,9 +91,8 @@ tape('traversal', t => {
 
 		t.test('halts traversal when passed function returns null', t => {
 			t.plan(8);
-			let root = setup(),
+			let root = setup(t),
 				trans = transform(0);
-			assertRootInitialValue(t);
 			traversal.processes[traversal.TYPES.DFS_POST](root, node => {
 				if (trans(node) === 3) {
 					return null;
