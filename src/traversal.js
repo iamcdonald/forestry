@@ -1,7 +1,5 @@
-'use strict';
-
-function breadthFirstOp(node, op) {
-	var arr = [node],
+const breadthFirstOp = (node, op) => {
+	let arr = [node],
 		idx = 0,
 		i,
 		l,
@@ -17,7 +15,7 @@ function breadthFirstOp(node, op) {
 	}
 }
 
-function depthFirstOpPre(node, op) {
+const depthFirstOpPre = (node, op) => {
 	var arr = [node],
 		i,
 		idx = 0;
@@ -32,7 +30,7 @@ function depthFirstOpPre(node, op) {
 	}
 }
 
-function depthFirstOpPost(node, op) {
+const depthFirstOpPost = (node, op) => {
 	var arr = [node],
 		lastParent,
 		i,
@@ -53,18 +51,14 @@ function depthFirstOpPost(node, op) {
 	}
 }
 
-var TYPES = {
+export const TYPES = {
 		BFS: 'BFS',
 		DFS_PRE: 'DFS_PRE',
 		DFS_POST: 'DFS_POST'
-	},
-	processes = {};
+	};
 
-processes[TYPES.BFS] = breadthFirstOp;
-processes[TYPES.DFS_PRE] = depthFirstOpPre;
-processes[TYPES.DFS_POST] = depthFirstOpPost;
-
-module.exports = {
-	TYPES: TYPES,
-	processes: processes
-};
+export const processes = {
+    [TYPES.BFS]: breadthFirstOp,
+    [TYPES.DFS_PRE]: depthFirstOpPre,
+    [TYPES.DFS_POST]: depthFirstOpPost
+  };

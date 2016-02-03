@@ -1,11 +1,3 @@
-'use strict';
-
-var traversal = require('./traversal'),
-	Node = require('./Node'),
-	parse = require('./parse');
-
-module.exports = {
-	TRAVERSAL_TYPES: traversal.TYPES,
-	Node: Node,
-	parse: parse
-};
+export { TYPES as TRAVERSAL_TYPES } from './traversal';
+export { default as Node } from './Node';
+export { default as parse } from './parse';

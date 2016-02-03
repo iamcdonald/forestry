@@ -1,55 +1,48 @@
-'use strict';
+import Node from './Node';
 
-var Node = require('./Node');
+const isObject = obj => (obj instanceof Object) && !(obj instanceof Array);
 
-function isObject(obj) {
-	return (obj instanceof Object) && !(obj instanceof Array);
-}
-
-function createNode(obj, childrenProp, dataProp) {
+const createNode = (obj, childrenProp, dataProp) => {
 	if (dataProp) {
 		return new Node(obj[dataProp]);
 	}
-	var data = {},
-		objKeys = Object.keys(obj);
-	for (var i = 0, len = objKeys.length; i < len; i++) {
-		if (objKeys[i] !== childrenProp) {
-			data[objKeys[i]] = obj[objKeys[i]];
-		}
-	}
+  let data = Object.keys(obj)
+        .reduce((acc, key) => {
+          if (key !== childrenProp) {
+            acc[key] = obj[key];
+          }
+          return acc;
+        }, {});
 	return new Node(data);
 }
 
-function asArray(children) {
- 	if (children) {
-		if (children.constructor === Array) {
-			for (var j = 0; j < children.length; j++) {
-				if (!isObject(children[j])) {
+const asArray = children => {
+  if (!children) {
+    return [];
+  }
+	if (Array.isArray(children)) {
+    children.forEach(child => {
+      if (!isObject(child)) {
+        throw new TypeError('Each child must be of type \'object\'');
+      }
+    })
+		return children;
+	}
+	if (isObject(children)) {
+    return Object.keys(children)
+      .map(key => {
+        if (!isObject(children[key])) {
 					throw new TypeError('Each child must be of type \'object\'');
 				}
-			}
-			return children;
-		}
-		if (typeof children === 'object') {
-			var childrenArr = [],
-				keys = Object.keys(children);
-			for(var i = 0, l = keys.length; i < l; i++) {
-				if (children.hasOwnProperty(keys[i])) {
-					if (!isObject(children[keys[i]])) {
-						throw new TypeError('Each child must be of type \'object\'');
-					}
-					childrenArr[i] = children[keys[i]];
-					childrenArr[i]._key = keys[i];
-				}
-			}
-			return childrenArr;
-		}
-		throw new TypeError('\'Children\' property can only be either an Object or Array');
+        let data = children[key];
+        data._key = key;
+        return data;
+      });
 	}
-	return [];
+	throw new TypeError('\'Children\' property can only be either an Object or Array');
 }
 
-function parse(obj, childrenProp, dataProp) {
+const parse = (obj, childrenProp, dataProp) => {
 
 	if (typeof obj !== 'object' || obj.constructor === Array) {
 		throw new TypeError('Passed arg must be an object');
@@ -75,5 +68,4 @@ function parse(obj, childrenProp, dataProp) {
 	return rootNode;
 }
 
-
-module.exports = parse;
+export default parse;

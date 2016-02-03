@@ -1,6 +1,6 @@
 import tape from 'tape';
 import Node from '../src/Node';
-import traversal from '../src/traversal';
+import * as traversal from '../src/traversal';
 
 tape('traversal', t => {
 
