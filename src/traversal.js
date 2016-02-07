@@ -37,7 +37,7 @@ const depthFirstOpPost = (node, op) => {
 		idx = 0;
 	while (idx >= 0) {
 		node = arr[idx];
-		if (lastParent === node || node.isLeaf()) {
+		if (lastParent === node || node.children.length === 0) {
 			--idx;
 			lastParent = node.parent;
 			if (op(node) === null) {
