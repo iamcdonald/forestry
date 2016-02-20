@@ -1,10 +1,9 @@
 import tape from 'tape';
-import dataGen from './utils/dataGen';
 import Forestry from '../src/Forestry';
 import commonTests from './common';
 
 
-const setup = () => {
+const setup = (dataGen) => {
   const [d1, d2, d3, d4, d5] = dataGen()();
   let model = {
 		reading: d1,
@@ -29,7 +28,7 @@ const creator = (reading, parent) => {
 const setData = (node, val) => node.data.reading = val;
 const getData = node => node.data.reading;
 
-tape('Forestry', t => {
+tape.only('Forestry', t => {
 
   commonTests(t, setup, creator, getData, setData);
 

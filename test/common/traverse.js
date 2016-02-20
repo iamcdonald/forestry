@@ -1,3 +1,4 @@
+import { simpleDataGen } from '../test-utils/dataGen';
 import { TYPES as TRAVERSAL_TYPES } from '../../src/traversal';
 
 export default (t, setup, getData, setData) => {
@@ -9,7 +10,7 @@ export default (t, setup, getData, setData) => {
 
     t.test('defaults to DFS_PRE', t => {
       t.plan(5);
-      let root = setup();
+      let root = setup(simpleDataGen);
       root.traverse(order(0));
       t.equal(getData(root), 0);
       t.equal(getData(root.children[0]), 1);
@@ -22,7 +23,7 @@ export default (t, setup, getData, setData) => {
 
       t.test('uses depth first pre traversal algorithm,', t => {
         t.plan(5);
-        let root = setup();
+        let root = setup(simpleDataGen);
         root.traverse(order(0));
         t.equal(getData(root), 0);
         t.equal(getData(root.children[0]), 1);
@@ -33,8 +34,8 @@ export default (t, setup, getData, setData) => {
 
       t.test('bails if passed function returns null', t => {
         t.plan(5);
-        let root = setup(),
-          control = setup();
+        let root = setup(simpleDataGen),
+          control = setup(simpleDataGen);
         root.traverse(orderNull(0)(1), TRAVERSAL_TYPES.DFS_PRE);
         t.equal(getData(root), 0);
         t.equal(getData(root.children[0]), 1);
@@ -48,7 +49,7 @@ export default (t, setup, getData, setData) => {
 
       t.test('uses depth first post traversal algorithm', t => {
         t.plan(5);
-        let root = setup();
+        let root = setup(simpleDataGen);
         root.traverse(order(0), TRAVERSAL_TYPES.DFS_POST);
         t.equal(getData(root), 4);
         t.equal(getData(root.children[0]), 2);
@@ -59,8 +60,8 @@ export default (t, setup, getData, setData) => {
 
       t.test('bails if passed function returns null', t => {
         t.plan(5);
-        let root = setup(),
-          control = setup();
+        let root = setup(simpleDataGen),
+          control = setup(simpleDataGen);
         root.traverse(orderNull(0)(1), TRAVERSAL_TYPES.DFS_POST);
         t.equal(getData(root), getData(root));
         t.equal(getData(root.children[0]), getData(control.children[0]));
@@ -74,7 +75,7 @@ export default (t, setup, getData, setData) => {
 
       t.test('uses breadth first traversal algorithm', t => {
         t.plan(5);
-        let root = setup();
+        let root = setup(simpleDataGen);
         root.traverse(order(0), TRAVERSAL_TYPES.BFS);
         t.equal(getData(root), 0);
         t.equal(getData(root.children[0]), 1);
@@ -85,8 +86,8 @@ export default (t, setup, getData, setData) => {
 
       t.test('bails if passed function returns null', t => {
         t.plan(5);
-        let root = setup(),
-          control = setup();
+        let root = setup(simpleDataGen),
+          control = setup(simpleDataGen);
         root.traverse(orderNull(0)(2), TRAVERSAL_TYPES.BFS);
         t.equal(getData(root), 0);
         t.equal(getData(root.children[0]), 1);
@@ -98,7 +99,7 @@ export default (t, setup, getData, setData) => {
 
     t.test('throws error if TRAVERSAL_TYPE given does not match one of the possible types', t => {
       t.plan(1);
-      let root = setup();
+      let root = setup(simpleDataGen);
       t.throws(() => root.traverse(order(0), 'WRONG'), /TraversalTypeError/);
     });
   });

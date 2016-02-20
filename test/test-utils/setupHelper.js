@@ -13,8 +13,8 @@ class Test {
 export const simpleTreeCreator = (creator) => {
   const [d1, d2, d3, d4, d5] = dataGen()();
   let root = creator(d1);
-  root.addChildren([{ reading: d2 }, { reading: d3 }])
-  root.children[0].addChildren([{ reading: d4 }, { reading: d5 }]);
+  root.addChildren([d2, d3])
+  root.children[0].addChildren([d4, d5]);
   return root;
 }
 

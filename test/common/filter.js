@@ -1,4 +1,5 @@
 import { TYPES as TRAVERSAL_TYPES } from '../../src/traversal';
+import { simpleDataGen } from '../test-utils/dataGen';
 
 export default (t, setup, getData) => {
   t.test('filter', t => {
@@ -7,7 +8,7 @@ export default (t, setup, getData) => {
 
     t.test('returns all nodes matching passed in term in order encountered', t => {
       t.plan(2);
-      let root = setup(),
+      let root = setup(simpleDataGen),
         nodes = root.filter(filterPred);
       t.deepEqual(
         nodes,
@@ -30,7 +31,7 @@ export default (t, setup, getData) => {
 
     t.test('returns empty array if no nodes match term', t => {
       t.plan(1);
-      let root = setup(),
+      let root = setup(simpleDataGen),
       nodes = root.filter(node => node.data === 'WRONG!!');
       t.deepEqual(nodes, []);
     });

@@ -26,6 +26,6 @@ export default (t, setup, creator, getData, setData) => {
   findTest(t, setup, getData);
   filterTest(t, setup, getData);
   reduceTest(t, setup, getData);
-  cloneTest(t, creator, getData);
+  cloneTest(t, setup, getData, setData);
   mapTest(t, setup, getData, setData);
 }

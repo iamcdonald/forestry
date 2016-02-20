@@ -11,11 +11,6 @@ export default class Node {
 	parent = null;
 	_children = [];
 
-  constructor(data, parent = null) {
-  	this.data = data;
-		this.parent = parent;
-  }
-
 	get children() {
 		return this._children;
 	}
@@ -24,11 +19,18 @@ export default class Node {
 		this._children = children;
 	}
 
+  constructor(data, parent = null) {
+  	this.data = data;
+		this.parent = parent;
+  }
+
 	getIndex() {
 		if (!this.parent) {
 			return null;
 		}
-		return this.parent.children.findIndex(node => node === this);
+		return this.parent.children.findIndex(node => {
+			return node.data == this.data
+		});
 	}
 
 	getRoute() {
@@ -69,12 +71,6 @@ export default class Node {
 		return this;
 	}
 
-	replace(node) {
-		if (this.parent) {
-			this.parent.children.splice(this.getIndex(), 1, node);
-		}
-	}
-
 	traverse(op, TRAVERSAL_TYPE = TRAVERSAL_TYPES.DFS_PRE) {
 		if (invalidType(TRAVERSAL_TYPE)) {
 			throw new TraversalTypeError();
@@ -103,25 +99,28 @@ export default class Node {
 		let mapped;
 		this.clone().traverse(node => {
 				let newNode = op(node);
-				node.replace(newNode);
 				if (!node.parent) {
 					mapped = newNode;
+					return;
 				}
+				let children = node.parent.children,
+					idx = node.getIndex();
+				children.splice(idx, 1, newNode);
+				node.parent.children = children;
 			}, TRAVERSAL_TYPES.DFS_POST);
 		return mapped;
 	}
 
-  clone() {
-		this.traverse(node => {
-			let clone = new Node(node.data);
-			clone.children = node.children.map(c => c.data);
-			clone.children.forEach(child => child.parent = clone);
-			node.data = clone;
-		}, TRAVERSAL_TYPES.DFS_POST);
-		let clone = this.data;
-		this.traverse(node => node.data = cloneData(node.data.data));
-		return clone;
+	clone() {
+		return this.reduce((root, node) => {
+			if (!root) {
+				return node._clone();
+			}
+			let route = node.getRoute().slice(0, -1),
+				parent = root.getNodeUsingRoute(route);
+			parent.addChildren(cloneData(node.data));
+			return root;
+		});
 	}
-
 
 }

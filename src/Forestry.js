@@ -10,12 +10,18 @@ export default class Forestry extends Node {
 		this._childrenProp = childrenProp;
 	}
 
-	getIndex() {
-		if (!this.parent) {
-			return null;
-		}
-		return this.parent.data[this._childrenProp].findIndex(node => node === this.data);
-	}
+	// get children() {
+	// 	if (!this._children.length) {
+	// 		let children = this.data[this._childrenProp] || [];
+	// 		this._children = children.map(child => new Forestry(child, this._childrenProp, this))
+	// 	}
+	// 	return this._children;
+	// }
+	//
+	// set children(children) {
+	// 	this._children = children;
+	// 	this.data[this._childrenProp] = children.map(child => child.data);
+	// }
 
 	get children() {
 		let children = this.data[this._childrenProp] || [];
@@ -26,24 +32,8 @@ export default class Forestry extends Node {
 		this.data[this._childrenProp] = children.map(child => child.data);
 	}
 
-	replace(node) {
-		if (node instanceof Forestry) {
-			node = node.data;
-		}
-		this.parent.data[this._childrenProp].splice(this.getIndex(), 1, node);
-	}
-
 	clone() {
-		let clone = this.data;
-		this.traverse(node => {
-			let clone = cloneData(node.data);
-			if (node.parent) {
-				node.replace(clone);
-			} else {
-				node.data = clone;
-			}
-		}, TRAVERSAL_TYPES.DFS_PRE);
-		return new Forestry(clone, this._childrenProp);
+		return new Forestry(cloneData(this.data), this._childrenProp);
 	}
 
 }

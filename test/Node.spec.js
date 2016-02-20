@@ -1,10 +1,8 @@
 import tape from 'tape';
-import dataGen from './utils/dataGen';
 import Node from '../src/Node';
 import commonTests from './common';
 
-
-const setup = () => {
+const setup = (dataGen) => {
   let [d1, d2, d3, d4, d5] = dataGen()(),
     root = new Node(d1);
 	root.addChildren([d2, d3]);
@@ -19,7 +17,8 @@ const creator = (data, parent) => {
 const setData = (node, val) => node.data = val;
 const getData = node => node.data;
 
-tape.only('Node', t => {
+
+tape('Node', t => {
 
   commonTests(t, setup, creator, getData, setData);
 

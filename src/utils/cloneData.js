@@ -4,7 +4,7 @@ const cloneData = data => {
 			return data.clone();
 		}
 		if (Array.isArray(data)) {
-			return data.slice();
+			return data.map(cloneData);
 		}
 		let clone = Object.assign({}, data);
 		Object.keys(clone).forEach(key => {

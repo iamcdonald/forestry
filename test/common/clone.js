@@ -1,30 +1,30 @@
-import { simpleTreeCreator, objectTreeCreator, classTreeCreator } from '../utils/setupHelper';
+import { simpleDataGen, objectDataGen, classDataGen } from '../test-utils/dataGen';
 
-export default (t, creator, getData) => {
+export default (t, setup, getData, setData) => {
   t.test('clone', t => {
 
-    const reducer = (acc, node) => `${acc} > ${getData(node)}`;
+    const plainReducer = (acc, node) => `${acc} > ${getData(node)}`;
     const objectReducer = (acc, node) => `${acc} > ${JSON.stringify(getData(node))}`;
-    const classReducer = (acc, node) => `${acc} > ${node.data.constructor.name} - ${node.data.data}`;
+    const classReducer = (acc, node) => `${acc} > ${getData(node).constructor.name} - ${getData(node).data}`;
 
-    const test = (t, root) => {
+    const test = (t, root, reducer) => {
       t.plan(2);
       let cloned = root.clone();
       t.equal(root.reduce(reducer, ''), cloned.reduce(reducer, ''));
-      cloned.children[0].remove();
+      setData(cloned.children[0], 'WOOGLES');
       t.notEqual(root.reduce(reducer, ''), cloned.reduce(reducer, ''));
     }
 
     t.test('clones tree with plain data', t => {
-      test(t, simpleTreeCreator(creator));
+      test(t, setup(simpleDataGen), plainReducer);
     });
 
     t.test('clones tree with object data', t => {
-      test(t, objectTreeCreator(creator));
+      test(t, setup(objectDataGen), objectReducer);
     });
 
     t.test('clones tree with classes', t => {
-      test(t, classTreeCreator(creator));
+      test(t, setup(classDataGen), classReducer);
     });
   });
 }
