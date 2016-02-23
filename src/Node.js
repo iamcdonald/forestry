@@ -12,10 +12,10 @@ export default class Node {
 	_children = [];
 
 	get children() {
-		return this._children;
+		return this._children.slice();
 	}
 
-	set children(children) {
+	_setChildren(children) {
 		this._children = children;
 	}
 
@@ -24,7 +24,7 @@ export default class Node {
 		this.parent = parent;
   }
 
-	getIndex() {
+	get index() {
 		if (!this.parent) {
 			return null;
 		}
@@ -33,40 +33,27 @@ export default class Node {
 		});
 	}
 
-	getRoute() {
-		let indexes = [];
-		this.climb(node => indexes.unshift(node.getIndex()));
-		return indexes.slice(1);
-	}
-
-	getNodeUsingRoute(route = []) {
-		try {
-			return route.reduce((node, idx) => node.children[idx], this);
-		} catch (e) {
-			return null;
-		}
-	}
-
-	climb(op) {
-		let node = this
+	climb(op, acc) {
+		let node = this;
 		do {
-			op(node)
+			acc = op(node, acc);
 		}
 		while((node = node.parent));
+		return acc;
 	}
 
 	addChildren(children) {
 		children = asArray(children).map(child => new Node(child, this));
-		this.children = this.children.concat(children);
+		this._setChildren(this.children.concat(children));
 	}
 
 	remove() {
 		if (!this.parent) {
-			return;
+			return this;
 		}
 		let children = this.parent.children;
-		children.splice(this.getIndex(), 1);
-		this.parent.children = children;
+		children.splice(this.index, 1);
+		this.parent._setChildren(children);
 		this.parent = null;
 		return this;
 	}
@@ -104,9 +91,9 @@ export default class Node {
 					return;
 				}
 				let children = node.parent.children,
-					idx = node.getIndex();
+					idx = node.index;
 				children.splice(idx, 1, newNode);
-				node.parent.children = children;
+				node.parent._setChildren(children);
 			}, TRAVERSAL_TYPES.DFS_POST);
 		return mapped;
 	}
@@ -114,10 +101,11 @@ export default class Node {
 	clone() {
 		return this.reduce((root, node) => {
 			if (!root) {
-				return node._clone();
+				return new Node(cloneData(node.data));
 			}
-			let route = node.getRoute().slice(0, -1),
-				parent = root.getNodeUsingRoute(route);
+			let route = node.climb((node, route) => [node.index].concat(route), []),
+			  parent = route.slice(1, -1)
+											.reduce((node, idx) => node.children[idx], root);
 			parent.addChildren(cloneData(node.data));
 			return root;
 		});

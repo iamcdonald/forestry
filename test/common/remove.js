@@ -9,7 +9,6 @@ export default (t, creator) => {
       let [d1, d2, d3, d4] = simpleDataGen()(),
         node = creator(d1);
       node.addChildren([d2, d3, d4]);
-      console.log('CALLING REMOVE')
       node.children[1].remove();
       t.equal(node.children.length, 2);
       t.deepEqual(node.children[1].data, d4);
@@ -25,11 +24,11 @@ export default (t, creator) => {
       t.equal(removed.parent, null);
     });
 
-    t.test('calling remove on root node does nothing', t => {
+    t.test('calling remove on root node returns root', t => {
       t.plan(1);
       let node = creator(simpleDataGen()().next());
       let removed = node.remove();
-      t.equal(removed, undefined);
+      t.equal(removed, node);
     });
 
   });

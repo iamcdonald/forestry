@@ -28,7 +28,7 @@ const creator = (reading, parent) => {
 const setData = (node, val) => node.data.reading = val;
 const getData = node => node.data.reading;
 
-tape.only('Forestry', t => {
+tape('Forestry', t => {
 
   commonTests(t, setup, creator, getData, setData);
 

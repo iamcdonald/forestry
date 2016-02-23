@@ -1,19 +1,19 @@
 import { simpleDataGen } from '../test-utils/dataGen';
 
 export default (t, setup) => {
-  t.test('getIndex', t => {
+  t.test('index', t => {
 
     t.test('returns index of node within parent\'s children', t => {
       t.plan(2);
       let root = setup(simpleDataGen);
-      t.equal(root.children[1].getIndex(), 1)
-      t.equal(root.children[0].getIndex(), 0)
+      t.equal(root.children[1].index, 1)
+      t.equal(root.children[0].index, 0)
     });
 
     t.test('returns null if node has no parent', t => {
       t.plan(1);
       let root = setup(simpleDataGen);
-      t.equal(root.getIndex(), null);
+      t.equal(root.index, null);
     });
   });
 
