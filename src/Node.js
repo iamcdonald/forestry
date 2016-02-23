@@ -11,44 +11,51 @@ export default class Node {
 	parent = null;
 	_children = [];
 
+	get children() {
+		return this._children.slice();
+	}
+
+	_setChildren(children) {
+		this._children = children;
+	}
+
   constructor(data, parent = null) {
   	this.data = data;
 		this.parent = parent;
   }
 
-	get children() {
-		return this._children;
-	}
-
-	set children(children) {
-		this._children = children;
-	}
-
-	getIndex() {
+	get index() {
 		if (!this.parent) {
 			return null;
 		}
-		return this.parent.children.findIndex(node => node === this);
+		return this.parent.children.findIndex(node => {
+			return node.data == this.data
+		});
+	}
+
+	climb(op, acc) {
+		let node = this;
+		do {
+			acc = op(node, acc);
+		}
+		while((node = node.parent));
+		return acc;
 	}
 
 	addChildren(children) {
 		children = asArray(children).map(child => new Node(child, this));
-		this.children = this.children.concat(children);
+		this._setChildren(this.children.concat(children));
 	}
 
 	remove() {
 		if (!this.parent) {
-			return;
+			return this;
 		}
 		let children = this.parent.children;
-		children.splice(this.getIndex(), 1);
-		this.parent.children = children;
+		children.splice(this.index, 1);
+		this.parent._setChildren(children);
 		this.parent = null;
 		return this;
-	}
-
-	replace(node) {
-		this.parent.children.splice(this.getIndex(), 1, node);
 	}
 
 	traverse(op, TRAVERSAL_TYPE = TRAVERSAL_TYPES.DFS_PRE) {
@@ -79,71 +86,29 @@ export default class Node {
 		let mapped;
 		this.clone().traverse(node => {
 				let newNode = op(node);
-				if (node.parent) {
-					node.replace(newNode);
-				} else {
+				if (!node.parent) {
 					mapped = newNode;
+					return;
 				}
+				let children = node.parent.children,
+					idx = node.index;
+				children.splice(idx, 1, newNode);
+				node.parent._setChildren(children);
 			}, TRAVERSAL_TYPES.DFS_POST);
 		return mapped;
 	}
 
-  clone() {
-		this.traverse(node => {
-			let clone = new Node(node.data);
-			clone.children = node.children.map(c => c.data);
-			clone.children.forEach(child => child.parent = clone);
-			node.data = clone;
-		}, TRAVERSAL_TYPES.DFS_POST);
-		let clone = this.data;
-		this.traverse(node => node.data = cloneData(node.data.data));
-		return clone;
-	}
-
-
-}
-
-export class Forestry extends Node {
-
-	constructor(data, childrenProp, parent = null) {
-		super(data, parent);
-		this._childrenProp = childrenProp;
-	}
-
-	getIndex() {
-		if (!this.parent) {
-			return null;
-		}
-		return this.parent.data[this._childrenProp].findIndex(node => node === this.data);
-	}
-
-	get children() {
-		let children = this.data[this._childrenProp] || [];
-		return children.map(child => new Forestry(child, this._childrenProp, this));
-	}
-
-	set children(children) {
-		this.data[this._childrenProp] = children.map(child => child.data);
-	}
-
-	replace(node) {
-		if (node instanceof Forestry) {
-			node = node.data;
-		}
-		this.parent.data[this._childrenProp].splice(this.getIndex(), 1, node);
-	}
-
 	clone() {
-		let clone = this.data;
-		this.traverse(node => {
-			let clone = cloneData(node.data);
-			if (node.parent) {
-				node.replace(clone);
-			} else {
-				node.data = clone;
+		return this.reduce((root, node) => {
+			if (!root) {
+				return new Node(cloneData(node.data));
 			}
-		}, TRAVERSAL_TYPES.DFS_PRE);
-		return new Forestry(clone, this._childrenProp);
+			let route = node.climb((node, route) => [node.index].concat(route), []),
+			  parent = route.slice(1, -1)
+											.reduce((node, idx) => node.children[idx], root);
+			parent.addChildren(cloneData(node.data));
+			return root;
+		});
 	}
 
 }

@@ -8,42 +8,21 @@ export default class Forestry extends Node {
 	constructor(data, childrenProp, parent = null) {
 		super(data, parent);
 		this._childrenProp = childrenProp;
-	}
-
-	getIndex() {
-		if (!this.parent) {
-			return null;
-		}
-		return this.parent.data[this._childrenProp].findIndex(node => node === this.data);
+		this._children = Array.apply(null, { length: this.children.length}).map(() => true);
 	}
 
 	get children() {
 		let children = this.data[this._childrenProp] || [];
-		return children.map(child => new Forestry(child, this._childrenProp, this));
+		return children.map((child, idx) => this._children[idx] ? new Forestry(child, this._childrenProp, this) : child);
 	}
 
-	set children(children) {
-		this.data[this._childrenProp] = children.map(child => child.data);
-	}
-
-	replace(node) {
-		if (node instanceof Forestry) {
-			node = node.data;
-		}
-		this.parent.data[this._childrenProp].splice(this.getIndex(), 1, node);
+	_setChildren(children) {
+		this._children = children.map(child => child instanceof Forestry);
+		this.data[this._childrenProp] = children.map((child, idx) => this._children[idx] ? child.data : child);
 	}
 
 	clone() {
-		let clone = this.data;
-		this.traverse(node => {
-			let clone = cloneData(node.data);
-			if (node.parent) {
-				node.replace(clone);
-			} else {
-				node.data = clone;
-			}
-		}, TRAVERSAL_TYPES.DFS_PRE);
-		return new Forestry(clone, this._childrenProp);
+		return new Forestry(cloneData(this.data), this._childrenProp);
 	}
 
 }

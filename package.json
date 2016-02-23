@@ -10,7 +10,7 @@
   "main": "src/Forestry.js",
   "scripts": {
     "-pretest": "jshint .",
-    "test": "nyc babel-tape-runner test/**.spec.js | tap-spec",
+    "test": "nyc --reporter=lcov babel-tape-runner 'test/**/*.spec.js' | tap-spec",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "build": "rm -rf dist && mkdir dist && browserify src/Forestry.js --s Forestry | derequire > dist/Forestry.js && uglifyjs dist/Forestry.js > dist/Forestry.min.js"
   },
