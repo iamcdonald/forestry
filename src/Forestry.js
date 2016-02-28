@@ -21,8 +21,17 @@ export default class Forestry extends Node {
 		this.data[this._childrenProp] = children.map((child, idx) => this._children[idx] ? child.data : child);
 	}
 
-	clone() {
-		return new Forestry(cloneData(this.data), this._childrenProp);
+	addChild(...children) {
+		children = children.map(child => new Forestry(child, this._childrenProp, this));
+		this._setChildren(this.children.concat(children));
+	}
+
+	// clone() {
+	// 	return new Forestry(cloneData(this.data), this._childrenProp);
+	// }
+
+	_clone() {
+		return new Forestry(cloneData(this.data, this._childrenProp), this._childrenProp);
 	}
 
 }

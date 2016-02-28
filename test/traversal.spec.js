@@ -10,8 +10,8 @@ tape('traversal', t => {
 		},
 		setup = t => {
 			let root = new Node('a');
-			root.addChildren(['a/1', 'a/2'])
-			root.children[0].addChildren('a/1/i');
+			root.addChild('a/1', 'a/2')
+			root.children[0].addChild('a/1/i');
 			t.equal(root.data, 'a');
 			t.equal(root.children[0].data, 'a/1');
 			t.equal(root.children[1].data, 'a/2');
