@@ -3,7 +3,6 @@ import TraversalTypeError from './error/TraversalTypeError';
 import cloneData from './utils/cloneData';
 
 const invalidType = type => Object.keys(TRAVERSAL_TYPES).map(key => TRAVERSAL_TYPES[key]).indexOf(type) < 0;
-const asArray = items => Array.isArray(items) ? items : [ items ];
 
 export default class Node {
 
@@ -33,6 +32,18 @@ export default class Node {
 		});
 	}
 
+	get isRoot() {
+		return !this.parent;
+	}
+
+	get isLeaf() {
+		return !this.children.length;
+	}
+
+	get level() {
+		return this.climb((n, l) => ++l, -1);
+	}
+
 	climb(op, acc) {
 		let node = this;
 		do {
@@ -42,8 +53,8 @@ export default class Node {
 		return acc;
 	}
 
-	addChildren(children) {
-		children = asArray(children).map(child => new Node(child, this));
+	addChild(...children) {
+		children = children.map(child => new Node(child, this));
 		this._setChildren(this.children.concat(children));
 	}
 
@@ -101,14 +112,21 @@ export default class Node {
 	clone() {
 		return this.reduce((root, node) => {
 			if (!root) {
-				return new Node(cloneData(node.data));
+				let clone = this._clone();
+				clone._setChildren([]);
+				return clone;
 			}
 			let route = node.climb((node, route) => [node.index].concat(route), []),
 			  parent = route.slice(1, -1)
 											.reduce((node, idx) => node.children[idx], root);
-			parent.addChildren(cloneData(node.data));
+			parent.addChild(cloneData(node.data, node._childrenProp));
+			parent.children[parent.children.length - 1]._setChildren([]);
 			return root;
 		});
+	}
+
+	_clone() {
+		return new Node(cloneData(this.data));
 	}
 
 }

@@ -5,8 +5,8 @@ import commonTests from './common';
 const setup = (dataGen) => {
   let [d1, d2, d3, d4, d5] = dataGen()(),
     root = new Node(d1);
-	root.addChildren([d2, d3]);
-	root.children[0].addChildren([d4, d5]);
+	root.addChild(d2, d3);
+	root.children[0].addChild(d4, d5);
 	return root;
 }
 

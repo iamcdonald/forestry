@@ -1,4 +1,4 @@
-const cloneData = data => {
+const cloneData = (data, childrenProp) => {
 	if (data instanceof Object) {
 		if (typeof data.clone === 'function') {
 			return data.clone();
@@ -6,12 +6,12 @@ const cloneData = data => {
 		if (Array.isArray(data)) {
 			return data.map(cloneData);
 		}
-		let clone = Object.assign({}, data);
-		Object.keys(clone).forEach(key => {
-			clone[key] = cloneData(clone[key]);
-		});
-		return clone;
-
+		return Object.keys(data).reduce((clone, key) => {
+			if (key !== childrenProp) {
+				clone[key] = cloneData(data[key]);
+			}
+			return clone;
+		}, {});
 	}
 	return data;
 }

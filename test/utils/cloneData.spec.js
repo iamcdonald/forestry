@@ -61,5 +61,23 @@ tape('src/utils/cloneData', t => {
     t.notDeepEqual(obj, clone);
   });
 
+  t.test('ignores childrenProp when cloning if one given', t => {
+    t.plan(2);
+    let obj = {
+        one: 1
+      , two: {
+          yeah: [{
+            what: 'ever'
+          }, {
+            no: 'doubt'
+          }]
+        }
+      },
+      clone = cloneData(obj, 'two');
+    t.deepEqual({ one: 1 }, clone);
+    clone.one = 'CHANGE!';
+    t.notDeepEqual({ one: 1 }, clone);
+  });
+
 
 });

@@ -8,7 +8,7 @@ export default (t, creator) => {
       t.plan(2);
       let [d1, d2, d3, d4] = simpleDataGen()(),
         node = creator(d1);
-      node.addChildren([d2, d3, d4]);
+      node.addChild(d2, d3, d4);
       node.children[1].remove();
       t.equal(node.children.length, 2);
       t.deepEqual(node.children[1].data, d4);
@@ -18,7 +18,7 @@ export default (t, creator) => {
       t.plan(2);
       let [d1, d2, d3, d4] = simpleDataGen()(),
         node = creator(d1);
-      node.addChildren([d2, d3, d4]);
+      node.addChild(d2, d3, d4);
       let removed = node.children[1].remove();
       t.equal(removed.data, d3);
       t.equal(removed.parent, null);
