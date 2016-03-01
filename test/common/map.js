@@ -25,13 +25,13 @@ export default (t, setup, getData, setData) => {
     t.test('maps to arbitary objects', t => {
       t.test(1);
       const [d1, d2, d3, d4, d5] = simpleDataGen()();
-      let root = setup(simpleDataGen),
-      mapped = root.map(node => {
-        return {
-          data: getData(node),
-          children: node.children
-        }
-      });
+      let root = setup(simpleDataGen);
+      let mapped = root.map(node => {
+          return {
+            data: getData(node),
+            children: node.children
+          }
+        });
       t.deepEqual(mapped, {
         data: d1,
         children: [{
