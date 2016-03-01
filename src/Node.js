@@ -14,7 +14,7 @@ export default class Node {
 		return this._children.slice();
 	}
 
-	_setChildren(children) {
+	set children(children) {
 		this._children = children;
 	}
 
@@ -54,8 +54,14 @@ export default class Node {
 	}
 
 	addChild(...children) {
-		children = children.map(child => new Node(child, this));
-		this._setChildren(this.children.concat(children));
+		children = children.map(child => {
+			if (child instanceof Node) {
+				child.parent = this;
+				return child;
+			}
+			return new Node(child, this)
+		});
+		this.children = this.children.concat(children);
 	}
 
 	remove() {
@@ -64,7 +70,7 @@ export default class Node {
 		}
 		let children = this.parent.children;
 		children.splice(this.index, 1);
-		this.parent._setChildren(children);
+		this.parent.children = children;
 		this.parent = null;
 		return this;
 	}
@@ -101,26 +107,24 @@ export default class Node {
 					mapped = newNode;
 					return;
 				}
-				let children = node.parent.children,
-					idx = node.index;
-				children.splice(idx, 1, newNode);
-				node.parent._setChildren(children);
+				let children = node.parent.children;
+				children.splice(node.index, 1, newNode)
+				node.parent.children = children;
 			}, TRAVERSAL_TYPES.DFS_POST);
 		return mapped;
 	}
 
 	clone() {
 		return this.reduce((root, node) => {
+			let clone = node._clone();
+			clone.children = [];
 			if (!root) {
-				let clone = this._clone();
-				clone._setChildren([]);
 				return clone;
 			}
 			let route = node.climb((node, route) => [node.index].concat(route), []),
 			  parent = route.slice(1, -1)
 											.reduce((node, idx) => node.children[idx], root);
-			parent.addChild(cloneData(node.data, node._childrenProp));
-			parent.children[parent.children.length - 1]._setChildren([]);
+			parent.addChild(clone);
 			return root;
 		});
 	}
