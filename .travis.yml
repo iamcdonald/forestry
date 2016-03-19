@@ -1,14 +1,10 @@
 sudo: false
 language: node_js
 node_js:
-- '0.11'
+- '5.7'
 branches:
   except:
   - built
-before_install:
-  - npm install npm -g
-  - npm -v
-script: ".travis/script.sh"
 env:
   global:
     - secure: ZBRGg1Qrdcn3P9meTlm1+lVK8ccROQ/ISdvAaVu+EFOPbsbSECq9yZ++XUDKhjHHdnjwomIT0ZJqIgFox3wjYkorwCzImH7N5kVW3K6cd/QZsSLXz1u/uNLEvgV9ghA97YwI0N7EkOUGNM1qjV0oDTwx1ff1nQA27HiW0yAjWgk=

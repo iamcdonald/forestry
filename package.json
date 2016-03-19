@@ -12,7 +12,8 @@
     "pretest": "eslint .",
     "test": "nyc --reporter=lcov babel-tape-runner 'test/**/*.spec.js' | tap-spec && nyc report",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "build": "rm -rf dist && mkdir dist && browserify src/Forestry.js --s Forestry | derequire > dist/Forestry.js && uglifyjs dist/Forestry.js > dist/Forestry.min.js"
+    "build": "",
+    "build-": "rm -rf dist && mkdir dist && browserify src/Forestry.js --s Forestry | derequire > dist/Forestry.js && uglifyjs dist/Forestry.js > dist/Forestry.min.js"
   },
   "keywords": [
     "tree",
@@ -25,13 +26,14 @@
   "license": "MIT",
   "devDependencies": {
     "babel": "^6.3.26",
-    "babel-eslint": "^5.0.0",
+    "babel-eslint": "6.0.0-beta.6",
     "babel-preset-es2015": "^6.3.13",
     "babel-preset-stage-0": "^6.3.13",
     "babel-tape-runner": "^2.0.0",
     "browserify": "^7.0.0",
     "coveralls": "^2.11.6",
     "derequire": "^2.0.0",
+    "eslint": "^2.4.0",
     "eslint-config-xo-space": "^0.10.0",
     "eslint-plugin-babel": "^3.1.0",
     "istanbul": "^0.3.17",
