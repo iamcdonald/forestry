@@ -2,36 +2,34 @@ import { simpleDataGen } from '../test-utils/dataGen';
 
 export default (t, setup, getData, setData) => {
   t.test('map', t => {
-
     const mapper = node => {
       setData(node, `!${getData(node)}`);
       return node;
-    }
+    };
 
     t.test('doesn\'t affect tree called on', t => {
       t.plan(5);
-      let root = setup(simpleDataGen),
-        mapped = root.map(mapper);
+      const root = setup(simpleDataGen);
       root.traverse(node => t.ok(/^[^!]/.test(getData(node))));
     });
 
     t.test('returns mapped tree', t => {
       t.test(5);
-      let root = setup(simpleDataGen),
-      mapped = root.map(mapper);
+      const root = setup(simpleDataGen);
+      const mapped = root.map(mapper);
       mapped.traverse(node => t.ok(/^!/.test(getData(node))));
     });
 
     t.test('maps to arbitary objects', t => {
       t.test(1);
       const [d1, d2, d3, d4, d5] = simpleDataGen()();
-      let root = setup(simpleDataGen);
-      let mapped = root.map(node => {
-          return {
-            data: getData(node),
-            children: node.children
-          }
-        });
+      const root = setup(simpleDataGen);
+      const mapped = root.map(node => {
+        return {
+          data: getData(node),
+          children: node.children
+        };
+      });
       t.deepEqual(mapped, {
         data: d1,
         children: [{
@@ -49,6 +47,5 @@ export default (t, setup, getData, setData) => {
         }]
       });
     });
-
   });
-}
+};

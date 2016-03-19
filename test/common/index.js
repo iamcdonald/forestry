@@ -6,7 +6,6 @@ import getLevelTest from './getLevel';
 import getIsLeafTest from './getIsLeaf';
 import getIsRootTest from './getIsRoot';
 import climbTest from './climb';
-import replaceTest from './replace';
 import traverseTest from './traverse';
 import findTest from './find';
 import filterTest from './filter';
@@ -29,4 +28,4 @@ export default (t, setup, creator, getData, setData) => {
   reduceTest(t, setup, getData);
   cloneTest(t, setup, getData, setData);
   mapTest(t, setup, getData, setData);
-}
+};

@@ -1,15 +1,13 @@
 import { simpleDataGen } from '../test-utils/dataGen';
 
 export default (t, setup) => {
-
   t.test('climb', t => {
-
     t.test('climbs from node to root passing each node encountered through passed function', t => {
       t.plan(2);
-      let root = setup(simpleDataGen),
-      captured = [];
+      const root = setup(simpleDataGen);
+      let captured = [];
       const op = node => captured.push(node);
-      root.children[0].children[0].climb(op),
+      root.children[0].children[0].climb(op);
       t.deepEqual(
         captured,
         [
@@ -19,14 +17,13 @@ export default (t, setup) => {
         ]);
 
       captured = [];
-      root.children[1].climb(op),
+      root.children[1].climb(op);
       t.deepEqual(
         captured,
         [
           root.children[1],
           root
         ]);
-      });
+    });
   });
-
-}
+};

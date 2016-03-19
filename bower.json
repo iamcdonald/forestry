@@ -7,20 +7,20 @@
   ],
   "description": "A lightweight javascript library for creating and manipulating trees.",
   "main": [
-	  "dist/Forestry.js"
+    "dist/Forestry.js"
   ],
   "keywords": [
-  	"tree",
-	"node"
+    "tree",
+    "node"
   ],
   "license": "MIT",
   "ignore": [
-	"src",
+    "src",
     "node_modules",
     "bower_components",
     "test",
     ".*",
-	"package.json",
-	"README.md"
+    "package.json",
+    "README.md"
   ]
 }

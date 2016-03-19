@@ -9,75 +9,79 @@ import reduceTest from './common/reduce';
 import cloneTest from './common/clone';
 import mapTest from './common/map';
 
-
-const nodeWithinForestrySetup = (dataGen) => {
+const nodeWithinForestrySetup = dataGen => {
   const [d1, d2, d3, d4, d5] = dataGen()();
-  let model = {
-		reading: d1,
-		echoes: []
-		},
-	  root = new Forestry(model, 'echoes'),
-    node = new Node(d2);
+  const model = {
+    reading: d1,
+    echoes: []
+  };
+  const root = new Forestry(model, 'echoes');
+  const node = new Node(d2);
   node.addChild(d4, d5);
   root.addChild(node, { reading: d3 });
   return root;
-}
+};
 
-const forestryWithinNodeSetup = (dataGen) => {
+const forestryWithinNodeSetup = dataGen => {
   const [d1, d2, d3, d4, d5] = dataGen()();
-  let model = {
-		reading: d2,
-		echoes: [{
+  const model = {
+    reading: d2,
+    echoes: [
+      {
         reading: d4
-      }, {
+      },
+      {
         reading: d5
-      }]
-		},
-    root = new Node(d1),
-    node = new Forestry(model, 'echoes');
+      }
+    ]
+  };
+  const root = new Node(d1);
+  const node = new Forestry(model, 'echoes');
   root.addChild(node, d3);
   return root;
-}
+};
 
-const forestryWithinForestrySetup = (dataGen) => {
+const forestryWithinForestrySetup = dataGen => {
   const [d1, d2, d3, d4, d5] = dataGen()();
-  let model = {
-		reading: d2,
-		echoes: [{
+  const model = {
+    reading: d2,
+    echoes: [
+      {
         reading: d4
-      }, {
+      },
+      {
         reading: d5
-      }]
-		},
-    root = new Forestry({ guffaws: d1, energy: []}, 'energy'),
-    node = new Forestry(model, 'echoes');
+      }
+    ]
+  };
+  const root = new Forestry({ guffaws: d1, energy: [] }, 'energy');
+  const node = new Forestry(model, 'echoes');
   root.addChild(node, { guffaws: d3 });
   return root;
-}
+};
 
 const setData = (node, val) => {
   if (node instanceof Forestry) {
     if (node.data.hasOwnProperty('reading')) {
       node.data.reading = val;
     }
-    node.data.guffaws = val
+    node.data.guffaws = val;
   } else {
     node.data = val;
   }
-}
+};
+
 const getData = node => {
   if (node instanceof Forestry) {
     if (node.data.hasOwnProperty('reading')) {
       return node.data.reading;
     }
     return node.data.guffaws;
-  } else {
-    return node.data;
   }
-}
+  return node.data;
+};
 
 tape('Mixed Tree I - Node Within Forestry Tree', t => {
-
   climbTest(t, nodeWithinForestrySetup);
   traverseTest(t, nodeWithinForestrySetup, getData, setData);
   findTest(t, nodeWithinForestrySetup, getData);
@@ -85,11 +89,9 @@ tape('Mixed Tree I - Node Within Forestry Tree', t => {
   reduceTest(t, nodeWithinForestrySetup, getData);
   cloneTest(t, nodeWithinForestrySetup, getData, setData);
   mapTest(t, nodeWithinForestrySetup, getData, setData);
-
 });
 
 tape('Mixed Tree II - Forestry Tree Within Node', t => {
-
   climbTest(t, forestryWithinNodeSetup);
   traverseTest(t, forestryWithinNodeSetup, getData, setData);
   findTest(t, forestryWithinNodeSetup, getData);
@@ -97,11 +99,9 @@ tape('Mixed Tree II - Forestry Tree Within Node', t => {
   reduceTest(t, forestryWithinNodeSetup, getData);
   cloneTest(t, forestryWithinNodeSetup, getData, setData);
   mapTest(t, forestryWithinNodeSetup, getData, setData);
-
 });
 
 tape('Mixed Tree III - Forestry Tree Within Forestry Tree', t => {
-
   climbTest(t, forestryWithinForestrySetup);
   traverseTest(t, forestryWithinForestrySetup, getData, setData);
   findTest(t, forestryWithinForestrySetup, getData);
@@ -109,5 +109,4 @@ tape('Mixed Tree III - Forestry Tree Within Forestry Tree', t => {
   reduceTest(t, forestryWithinForestrySetup, getData);
   cloneTest(t, forestryWithinForestrySetup, getData, setData);
   mapTest(t, forestryWithinForestrySetup, getData, setData);
-
 });

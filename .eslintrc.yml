@@ -1,0 +1,4 @@
+---
+  extends: xo-space/esnext
+  rules:
+    babel/object-curly-spacing: [2, always]

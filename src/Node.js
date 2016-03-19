@@ -6,131 +6,140 @@ const invalidType = type => Object.keys(TRAVERSAL_TYPES).map(key => TRAVERSAL_TY
 
 export default class Node {
 
-	data = null;
-	parent = null;
-	_children = [];
+  data = null;
+  parent = null;
+  _children = [];
 
-	get children() {
-		return this._children.slice();
-	}
-
-	set children(children) {
-		this._children = children;
-	}
-
-  constructor(data, parent = null) {
-  	this.data = data;
-		this.parent = parent;
+  get children() {
+    return this._children.slice();
   }
 
-	get index() {
-		if (!this.parent) {
-			return null;
-		}
-		return this.parent.children.findIndex(node => {
-			return node.data == this.data
-		});
-	}
+  set children(children) {
+    this._children = children;
+  }
 
-	get isRoot() {
-		return !this.parent;
-	}
+  constructor(data, parent = null) {
+    this.data = data;
+    this.parent = parent;
+  }
 
-	get isLeaf() {
-		return !this.children.length;
-	}
+  get index() {
+    if (!this.parent) {
+      return null;
+    }
+    return this.parent.children.findIndex(node => node.data === this.data);
+  }
 
-	get level() {
-		return this.climb((n, l) => ++l, -1);
-	}
+  get isRoot() {
+    return !this.parent;
+  }
 
-	climb(op, acc) {
-		let node = this;
-		do {
-			acc = op(node, acc);
-		}
-		while((node = node.parent));
-		return acc;
-	}
+  get isLeaf() {
+    return !this.children.length;
+  }
 
-	addChild(...children) {
-		children = children.map(child => {
-			if (child instanceof Node) {
-				child.parent = this;
-				return child;
-			}
-			return new Node(child, this)
-		});
-		this.children = this.children.concat(children);
-	}
+  get level() {
+    return this.climb((n, l) => ++l, -1);
+  }
 
-	remove() {
-		if (!this.parent) {
-			return this;
-		}
-		let children = this.parent.children;
-		children.splice(this.index, 1);
-		this.parent.children = children;
-		this.parent = null;
-		return this;
-	}
+  climb(op, acc) {
+    let node = this;
+    do {
+      acc = op(node, acc);
+    }
+    while ((node = node.parent));
+    return acc;
+  }
 
-	traverse(op, TRAVERSAL_TYPE = TRAVERSAL_TYPES.DFS_PRE) {
-		if (invalidType(TRAVERSAL_TYPE)) {
-			throw new TraversalTypeError();
-		}
-		traversalProcesses[TRAVERSAL_TYPE](this, op);
-	}
+  addChild(...children) {
+    children = children.map(child => {
+      if (child instanceof Node) {
+        child.parent = this;
+        return child;
+      }
+      return new Node(child, this);
+    });
+    this.children = this.children.concat(children);
+  }
 
-	find(term, TRAVERSAL_TYPE) {
-		let found = null;
-		this.traverse(node => term(node) && (found = node) && null, TRAVERSAL_TYPE);
-		return found;
-	}
+  remove() {
+    if (!this.parent) {
+      return this;
+    }
+    const children = this.parent.children;
+    children.splice(this.index, 1);
+    this.parent.children = children;
+    this.parent = null;
+    return this;
+  }
 
-	filter(term, TRAVERSAL_TYPE) {
-		let found = [];
-		this.traverse(node => term(node) && found.push(node), TRAVERSAL_TYPE);
-		return found;
-	}
+  traverse(op, TRAVERSAL_TYPE = TRAVERSAL_TYPES.DFS_PRE) {
+    if (invalidType(TRAVERSAL_TYPE)) {
+      throw new TraversalTypeError();
+    }
+    traversalProcesses[TRAVERSAL_TYPE](this, op);
+  }
 
-	reduce(op, acc, TRAVERSAL_TYPE) {
-		this.traverse(node => acc = op(acc, node), TRAVERSAL_TYPE);
-		return acc;
-	}
+  find(term, TRAVERSAL_TYPE) {
+    let found = null;
+    this.traverse(node => {
+      if (term(node)) {
+        found = node;
+        return null;
+      }
+    }, TRAVERSAL_TYPE);
+    return found;
+  }
 
-	map(op) {
-		let mapped;
-		this.clone().traverse(node => {
-				let newNode = op(node);
-				if (!node.parent) {
-					mapped = newNode;
-					return;
-				}
-				let children = node.parent.children;
-				children.splice(node.index, 1, newNode)
-				node.parent.children = children;
-			}, TRAVERSAL_TYPES.DFS_POST);
-		return mapped;
-	}
+  filter(term, TRAVERSAL_TYPE) {
+    const matches = [];
+    this.traverse(node => {
+      if (term(node)) {
+        matches.push(node);
+      }
+    }, TRAVERSAL_TYPE);
+    return matches;
+  }
 
-	clone() {
-		return this.reduce((root, node) => {
-			let clone = node._clone();
-			clone.children = [];
-			if (!root) {
-				return clone;
-			}
-			let route = node.climb((node, route) => [node.index].concat(route), []),
-			  parent = route.slice(1, -1)
-											.reduce((node, idx) => node.children[idx], root);
-			parent.addChild(clone);
-			return root;
-		});
-	}
+  reduce(op, acc, TRAVERSAL_TYPE) {
+    this.traverse(node => {
+      acc = op(acc, node);
+    }, TRAVERSAL_TYPE);
+    return acc;
+  }
 
-	_clone() {
-		return new Node(cloneData(this.data));
-	}
+  map(op) {
+    let mapped;
+    this.clone().traverse(node => {
+      const newNode = op(node);
+      if (!node.parent) {
+        mapped = newNode;
+        return;
+      }
+      const children = node.parent.children;
+      children.splice(node.index, 1, newNode);
+      node.parent.children = children;
+    }, TRAVERSAL_TYPES.DFS_POST);
+    return mapped;
+  }
+
+  clone() {
+    return this.reduce((root, node) => {
+      const clone = node._clone();
+      clone.children = [];
+      if (!root) {
+        return clone;
+      }
+      const route = node.climb((node, route) => [node.index].concat(route), []);
+      const parent = route.slice(1, -1)
+                      .reduce((node, idx) => node.children[idx], root);
+      parent.addChild(clone);
+      return root;
+    });
+  }
+
+  _clone() {
+    return new Node(cloneData(this.data));
+  }
 
 }
