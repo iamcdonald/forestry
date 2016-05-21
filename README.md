@@ -27,25 +27,25 @@ Create a node with the given data.
 ```js
 var node = new Forestry.Node(data);
 ```
-#### isRoot()
+#### isRoot
 Returns `true` if the node has no parent and `false` otherwise.
 ```js
-node.isRoot();
+node.isRoot;
 ```
-#### isLeaf()
+#### isLeaf
 Returns `true` if the node has no children and `false` otherwise.
 ```js
-node.isLeaf();
+node.isLeaf;
 ```
-#### index()
+#### index
 Returns the placement of the node within parent's children.
 ```js
-node.index();
+node.index;
 ```
-#### level()
+#### level
 Returns the level of the node within the tree
 ```js
-node.level();
+node.level;
 ```
 #### addChild(Type: `Any` [, val2 [, val3 [, valX]]])
 Adds the given Node/s (if the arguments are not of type Node each is first wrapped) as children.
@@ -130,32 +130,69 @@ In some cases this may not matter (you may only want to manipulate the tree stru
 node.clone();
 ```
 
-### Forestry.parse(Type: `Object`, [Type: `String`], [Type: `String`])
-Parses a given object to a Tree of `Node` objects and returns the root `Node` of the new tree.  
-`Array`'s or `Object`'s (key-value maps) of child nodes will be accepted. If an `Object` is found it is coerced to an `Array` and the key for each value `Object` is placed under the property `_key`.  
-By default children are expected to reside under a `children` property however an optional second argument can be passed to change this. In the example below we tell it to look for child nodes under the property `links`.  
-All properties except `children` (or the second argument if one is passed) will be taken as the basis for the `data` of each node. However, an optional third argument can be passed to cherry pick a single property. In the example below we take only the `name` as the data for each node resulting in `data: 'Joanne'`, by default it would have been an object i.e. `data: {name: 'Joanne'}`.  
+### Forestry(Type: `Object`, [Type: `String`])
+Enables the use of the Forestry.Node API on already existing tree data structures.
+Any operations that result in modifications to the data structure (addChildren, remove) will be persisted upon the data structure originally passed in.
+
+#### Constructor
+Wraps an already existing tree data structure object, the first argument, and returns the root Forestry object.
+Rather than parsing the entire tree children of this root node are parsed and wrapped lazily when requested.
+The second argument informs the Forestry instance what property children reside under within this data model.
+
 ```js
-var obj = {
-      name: 'Joanne',
+const obj = {
+    name: 'Joanne',
+    links: [{
+      name: 'Jake'
+    }, {
+      name: 'Jason',
       links: [{
-        name: 'Jake'
-      }, {
-        name: 'Jason',
-        links: [{
-          name: 'Jennifer'
-        }]
+        name: 'Jennifer'
       }]
-    },
-    rootNode = Forestry.parse(obj, 'links', 'name');
+    }]
+  };
+const rootNode = Forestry(obj, 'links');
 ```
+
+## Forestry vs Forestry.Node
+Forestry and Forestry.Node have identical API's.
+However Forestry is intended to allow the API to be used across already existing tree data structures.
+Conversely Forestry.Node is meant for those wishing to use the lib when constructing their own tree data structures.
+Whilst the two represent different ways of utilising the API they are interoperable as shown below.
+
+```js
+const names1 = {
+    name: 'Joanne',
+    links: [{
+      name: 'Jake'
+    }, {
+      name: 'Jason',
+      links: [{
+        name: 'Jennifer'
+      }]
+    }]
+  };
+const names2 = {
+    name: 'Steve',
+    offspring: [{
+      name: 'Susan'
+    }, {
+      name: 'Fredrik'
+    }]
+  };
+const names = Forestry(names1, 'links');
+names.addChild(Forestry(names2, 'offspring'), Forestry.Node('James'));
+names.
+```
+
+
 ## Issues
 If you have any issues using this library or if you would like to suggest tweaks or new functionality please don't hesitate to give me a shout.  
 
 ## Contribution
 * Fork the repository.
 * run `npm install` in the project root folder to make sure you have all the dependencies needed.
-* run `npm test` which will run jshint on all .js files within the project and run the tests.
+* run `npm test` which will run eslint on all .js files within the project and run the tests and gather code coverage.
 
 ## License
 

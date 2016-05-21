@@ -1,4 +1,4 @@
-import { TYPES as TRAVERSAL_TYPES } from '../../src/traversal';
+import { TYPES as TRAVERSAL_TYPES } from '../../../src/traversal';
 import { simpleDataGen } from '../test-utils/dataGen';
 
 export default (t, setup, getData) => {

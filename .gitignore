@@ -1,5 +1,6 @@
 node_modules/
 *.swp
-dist/
+dist
+lib
 coverage/
 .nyc_output/
