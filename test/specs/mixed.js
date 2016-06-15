@@ -1,4 +1,3 @@
-import tape from 'tape';
 import climbTest from './ForestryNodeCommonTests/climb';
 import traverseTest from './ForestryNodeCommonTests/traverse';
 import findTest from './ForestryNodeCommonTests/find';
@@ -6,6 +5,16 @@ import filterTest from './ForestryNodeCommonTests/filter';
 import reduceTest from './ForestryNodeCommonTests/reduce';
 import cloneTest from './ForestryNodeCommonTests/clone';
 import mapTest from './ForestryNodeCommonTests/map';
+
+function testCombination(ctx, setup, getData, setData) {
+  climbTest(ctx, setup);
+  traverseTest(ctx, setup, getData, setData);
+  findTest(ctx, setup, getData);
+  filterTest(ctx, setup, getData);
+  reduceTest(ctx, setup, getData);
+  cloneTest(ctx, setup, getData, setData);
+  mapTest(ctx, setup, getData, setData);
+}
 
 export default (Forestry, Node) => {
   const nodeWithinForestrySetup = dataGen => {
@@ -80,33 +89,7 @@ export default (Forestry, Node) => {
     return node.data;
   };
 
-  tape('Mixed Tree I - Node Within Forestry Tree', t => {
-    climbTest(t, nodeWithinForestrySetup);
-    traverseTest(t, nodeWithinForestrySetup, getData, setData);
-    findTest(t, nodeWithinForestrySetup, getData);
-    filterTest(t, nodeWithinForestrySetup, getData);
-    reduceTest(t, nodeWithinForestrySetup, getData);
-    cloneTest(t, nodeWithinForestrySetup, getData, setData);
-    mapTest(t, nodeWithinForestrySetup, getData, setData);
-  });
-
-  tape('Mixed Tree II - Forestry Tree Within Node', t => {
-    climbTest(t, forestryWithinNodeSetup);
-    traverseTest(t, forestryWithinNodeSetup, getData, setData);
-    findTest(t, forestryWithinNodeSetup, getData);
-    filterTest(t, forestryWithinNodeSetup, getData);
-    reduceTest(t, forestryWithinNodeSetup, getData);
-    cloneTest(t, forestryWithinNodeSetup, getData, setData);
-    mapTest(t, forestryWithinNodeSetup, getData, setData);
-  });
-
-  tape('Mixed Tree III - Forestry Tree Within Forestry Tree', t => {
-    climbTest(t, forestryWithinForestrySetup);
-    traverseTest(t, forestryWithinForestrySetup, getData, setData);
-    findTest(t, forestryWithinForestrySetup, getData);
-    filterTest(t, forestryWithinForestrySetup, getData);
-    reduceTest(t, forestryWithinForestrySetup, getData);
-    cloneTest(t, forestryWithinForestrySetup, getData, setData);
-    mapTest(t, forestryWithinForestrySetup, getData, setData);
-  });
+  testCombination('Forestry -> Node', nodeWithinForestrySetup, getData, setData);
+  testCombination('Node -> Forestry', forestryWithinNodeSetup, getData, setData);
+  testCombination('Forestry -> Forestry', forestryWithinForestrySetup, getData, setData);
 };

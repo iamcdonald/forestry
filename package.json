@@ -11,7 +11,7 @@
   "scripts": {
     "pretest": "eslint .",
     "test": "nyc --reporter=lcov npm run test:src && nyc report",
-    "test:src": "babel-tape-runner 'test/src/**/*.spec.js' | tap-spec",
+    "test:src": "ava 'test/src/**/*.spec.js'",
     "test:lib": "babel-tape-runner 'test/lib/**/*.spec.js' | tap-spec",
     "test:dist": "browserify test/dist/Forestry.spec.js -t [ babelify --presets [ es2015 stage-0 ] ] | tap-closer | smokestack | tap-spec",
     "test:dist-min": "browserify test/dist/Forestry.min.spec.js -t [ babelify ] | tap-closer | smokestack | tap-spec",
@@ -33,6 +33,7 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "ava": "^0.15.2",
     "babel": "^6.3.26",
     "babel-cli": "^6.9.0",
     "babel-eslint": "6.0.0-beta.6",
@@ -66,5 +67,9 @@
   },
   "dependencies": {
     "babel-runtime": "^6.9.0"
+  },
+  "ava": {
+    "babel": "inherit",
+    "require": ["babel-register", "babel-polyfill"]
   }
 }

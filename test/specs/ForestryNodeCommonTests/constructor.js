@@ -1,25 +1,19 @@
-export default (t, creator, getData) => {
-  t.test('constructor', t => {
-    t.test('data arg', t => {
-      t.test('persists data to instance', t => {
-        t.plan(1);
-        const n = creator('data');
-        t.equal(getData(n), 'data');
-      });
-    });
+import test from 'ava';
 
-    t.test('parent arg', t => {
-      t.test('persists parent to instance if given', t => {
-        t.plan(1);
-        const n = creator('data', 'parent');
-        t.equal(n.parent, 'parent');
-      });
+export default (ctx, creator, getData) => {
+  ctx = `${ctx} : init`;
+  test(`${ctx} : persists data to instance`, t => {
+    const n = creator('data');
+    t.is(getData(n), 'data');
+  });
 
-      t.test('parent is null if no arg passed', t => {
-        t.plan(1);
-        const n = creator('data');
-        t.equal(n.parent, null);
-      });
-    });
+  test(`${ctx} : persists parent to instance if given`, t => {
+    const n = creator('data', 'parent');
+    t.is(n.parent, 'parent');
+  });
+
+  test(`${ctx} : parent is null if no arg passed`, t => {
+    const n = creator('data');
+    t.is(n.parent, null);
   });
 };

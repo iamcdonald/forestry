@@ -13,19 +13,19 @@ import reduceTest from './reduce';
 import cloneTest from './clone';
 import mapTest from './map';
 
-export default (t, setup, creator, getData, setData) => {
-  constructorTest(t, creator, getData);
-  addChildTest(t, creator);
-  removeTest(t, creator);
-  getIndexTest(t, setup);
-  getLevelTest(t, setup);
-  getIsLeafTest(t, setup);
-  getIsRootTest(t, setup);
-  climbTest(t, setup);
-  traverseTest(t, setup, getData, setData);
-  findTest(t, setup, getData);
-  filterTest(t, setup, getData);
-  reduceTest(t, setup, getData);
-  cloneTest(t, setup, getData, setData);
-  mapTest(t, setup, getData, setData);
+export default (ctx, setup, creator, getData, setData) => {
+  constructorTest(ctx, creator, getData);
+  addChildTest(ctx, creator);
+  removeTest(ctx, creator);
+  getIndexTest(ctx, setup);
+  getLevelTest(ctx, setup);
+  getIsLeafTest(ctx, setup);
+  getIsRootTest(ctx, setup);
+  climbTest(ctx, setup);
+  traverseTest(ctx, setup, getData, setData);
+  findTest(ctx, setup, getData);
+  filterTest(ctx, setup, getData);
+  reduceTest(ctx, setup, getData);
+  cloneTest(ctx, setup, getData, setData);
+  mapTest(ctx, setup, getData, setData);
 };

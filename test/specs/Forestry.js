@@ -1,4 +1,3 @@
-import tape from 'tape';
 import commonTests from './ForestryNodeCommonTests/index';
 
 export default Forestry => {
@@ -35,7 +34,5 @@ export default Forestry => {
 
   const getData = node => node.data.reading;
 
-  tape('Forestry', t => {
-    commonTests(t, setup, creator, getData, setData);
-  });
+  commonTests('Forestry', setup, creator, getData, setData);
 };

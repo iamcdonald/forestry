@@ -1,17 +1,15 @@
+import test from 'ava';
 import { simpleDataGen } from '../test-utils/dataGen';
 
-export default (t, setup) => {
-  t.test('isLeaf', t => {
-    t.test('returns true if node is root', t => {
-      t.plan(1);
-      const root = setup(simpleDataGen);
-      t.equal(root.isRoot, true);
-    });
+export default (ctx, setup) => {
+  ctx = `${ctx} : isLeaf`;
+  test(`${ctx} : returns true if node is root`, t => {
+    const root = setup(simpleDataGen);
+    t.is(root.isRoot, true);
+  });
 
-    t.test('returns false if node is not root', t => {
-      t.plan(1);
-      const root = setup(simpleDataGen);
-      t.equal(root.children[0].isRoot, false);
-    });
+  test(`${ctx} : returns false if node is not root`, t => {
+    const root = setup(simpleDataGen);
+    t.is(root.children[0].isRoot, false);
   });
 };

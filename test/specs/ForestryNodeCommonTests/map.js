@@ -1,51 +1,48 @@
+import test from 'ava';
 import { simpleDataGen } from '../test-utils/dataGen';
 
-export default (t, setup, getData, setData) => {
-  t.test('map', t => {
-    const mapper = node => {
-      setData(node, `!${getData(node)}`);
-      return node;
-    };
+export default (ctx, setup, getData, setData) => {
+  ctx = `${ctx} : map`;
+  const mapper = node => {
+    setData(node, `!${getData(node)}`);
+    return node;
+  };
 
-    t.test('doesn\'t affect tree called on', t => {
-      t.plan(5);
-      const root = setup(simpleDataGen);
-      root.traverse(node => t.ok(/^[^!]/.test(getData(node))));
+  test(`${ctx} : doesn\'t affect tree called on`, t => {
+    const root = setup(simpleDataGen);
+    root.traverse(node => t.truthy(/^[^!]/.test(getData(node))));
+  });
+
+  test(`${ctx} : returns mapped tree`, t => {
+    const root = setup(simpleDataGen);
+    const mapped = root.map(mapper);
+    mapped.traverse(node => t.truthy(/^!/.test(getData(node))));
+  });
+
+  test(`${ctx} : maps to arbitary objects`, t => {
+    const [d1, d2, d3, d4, d5] = simpleDataGen()();
+    const root = setup(simpleDataGen);
+    const mapped = root.map(node => {
+      return {
+        data: getData(node),
+        children: node.children
+      };
     });
-
-    t.test('returns mapped tree', t => {
-      t.test(5);
-      const root = setup(simpleDataGen);
-      const mapped = root.map(mapper);
-      mapped.traverse(node => t.ok(/^!/.test(getData(node))));
-    });
-
-    t.test('maps to arbitary objects', t => {
-      t.test(1);
-      const [d1, d2, d3, d4, d5] = simpleDataGen()();
-      const root = setup(simpleDataGen);
-      const mapped = root.map(node => {
-        return {
-          data: getData(node),
-          children: node.children
-        };
-      });
-      t.deepEqual(mapped, {
-        data: d1,
+    t.deepEqual(mapped, {
+      data: d1,
+      children: [{
+        data: d2,
         children: [{
-          data: d2,
-          children: [{
-            data: d4,
-            children: []
-          }, {
-            data: d5,
-            children: []
-          }]
+          data: d4,
+          children: []
         }, {
-          data: d3,
+          data: d5,
           children: []
         }]
-      });
+      }, {
+        data: d3,
+        children: []
+      }]
     });
   });
 };
