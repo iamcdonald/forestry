@@ -1,0 +1,31 @@
+import initTest from './init';
+import addChildTest from './addChild';
+import removeTest from './remove';
+import getIndexTest from './getIndex';
+import getLevelTest from './getLevel';
+import getIsLeafTest from './getIsLeaf';
+import getIsRootTest from './getIsRoot';
+import climbTest from './climb';
+import traverseTest from './traverse';
+import findTest from './find';
+import filterTest from './filter';
+import reduceTest from './reduce';
+import cloneTest from './clone';
+import mapTest from './map';
+
+export default (ctx, setup, creator, getData, setData) => {
+  initTest(ctx, creator, getData);
+  addChildTest(ctx, creator);
+  removeTest(ctx, creator);
+  getIndexTest(ctx, setup);
+  getLevelTest(ctx, setup);
+  getIsLeafTest(ctx, setup);
+  getIsRootTest(ctx, setup);
+  climbTest(ctx, setup);
+  traverseTest(ctx, setup, getData, setData);
+  findTest(ctx, setup, getData);
+  filterTest(ctx, setup, getData);
+  reduceTest(ctx, setup, getData);
+  cloneTest(ctx, setup, getData, setData);
+  mapTest(ctx, setup, getData, setData);
+};

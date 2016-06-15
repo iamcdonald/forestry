@@ -1,46 +1,47 @@
 import { TYPES as TRAVERSAL_TYPES, processes as traversalProcesses } from './traversal';
 import TraversalTypeError from './error/TraversalTypeError';
-import cloneData from './utils/cloneData';
+import cloneData from './cloneData';
 
 const invalidType = type => Object.keys(TRAVERSAL_TYPES).map(key => TRAVERSAL_TYPES[key]).indexOf(type) < 0;
 
-export default class Node {
+const node = {
 
-  data = null;
-  parent = null;
-  _children = [];
+  data: null,
+  parent: null,
+  _children: [],
+
+  init(data, parent = null) {
+    this.data = data;
+    this.parent = parent;
+    return this;
+  },
 
   get children() {
     return this._children.slice();
-  }
+  },
 
   set children(children) {
     this._children = children;
-  }
-
-  constructor(data, parent = null) {
-    this.data = data;
-    this.parent = parent;
-  }
+  },
 
   get index() {
     if (!this.parent) {
       return null;
     }
     return this.parent.children.findIndex(node => node.data === this.data);
-  }
+  },
 
   get isRoot() {
     return !this.parent;
-  }
+  },
 
   get isLeaf() {
     return !this.children.length;
-  }
+  },
 
   get level() {
     return this.climb((n, l) => ++l, -1);
-  }
+  },
 
   climb(op, acc) {
     let node = this;
@@ -49,18 +50,18 @@ export default class Node {
     }
     while ((node = node.parent));
     return acc;
-  }
+  },
 
   addChild(...children) {
     children = children.map(child => {
-      if (child instanceof Node) {
+      if (node.isPrototypeOf(child)) {
         child.parent = this;
         return child;
       }
-      return new Node(child, this);
+      return Object.create(node).init(child, this);
     });
     this.children = this.children.concat(children);
-  }
+  },
 
   remove() {
     if (!this.parent) {
@@ -71,14 +72,14 @@ export default class Node {
     this.parent.children = children;
     this.parent = null;
     return this;
-  }
+  },
 
   traverse(op, TRAVERSAL_TYPE = TRAVERSAL_TYPES.DFS_PRE) {
     if (invalidType(TRAVERSAL_TYPE)) {
       throw new TraversalTypeError();
     }
     traversalProcesses[TRAVERSAL_TYPE](this, op);
-  }
+  },
 
   find(term, TRAVERSAL_TYPE) {
     let found = null;
@@ -89,7 +90,7 @@ export default class Node {
       }
     }, TRAVERSAL_TYPE);
     return found;
-  }
+  },
 
   filter(term, TRAVERSAL_TYPE) {
     const matches = [];
@@ -99,14 +100,14 @@ export default class Node {
       }
     }, TRAVERSAL_TYPE);
     return matches;
-  }
+  },
 
   reduce(op, acc, TRAVERSAL_TYPE) {
     this.traverse(node => {
       acc = op(acc, node);
     }, TRAVERSAL_TYPE);
     return acc;
-  }
+  },
 
   map(op) {
     let mapped;
@@ -121,7 +122,7 @@ export default class Node {
       node.parent.children = children;
     }, TRAVERSAL_TYPES.DFS_POST);
     return mapped;
-  }
+  },
 
   clone() {
     return this.reduce((root, node) => {
@@ -136,10 +137,12 @@ export default class Node {
       parent.addChild(clone);
       return root;
     });
-  }
+  },
 
   _clone() {
-    return new Node(cloneData(this.data));
+    return Object.create(node).init(cloneData(this.data));
   }
 
-}
+};
+
+export default node;

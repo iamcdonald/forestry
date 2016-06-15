@@ -1,4 +1,4 @@
-const breadthFirstOp = (node, op) => {
+function breadthFirstOp(node, op) {
   const arr = [node];
   let idx = 0;
   let i;
@@ -13,9 +13,9 @@ const breadthFirstOp = (node, op) => {
       arr[++len] = node.children[i];
     }
   }
-};
+}
 
-const depthFirstOpPre = (node, op) => {
+function depthFirstOpPre(node, op) {
   const arr = [node];
   let i;
   let idx = 0;
@@ -28,9 +28,9 @@ const depthFirstOpPre = (node, op) => {
       arr[++idx] = node.children[i];
     }
   }
-};
+}
 
-const depthFirstOpPost = (node, op) => {
+function depthFirstOpPost(node, op) {
   const arr = [node];
   let lastParent;
   let i;
@@ -49,7 +49,7 @@ const depthFirstOpPost = (node, op) => {
       arr[++idx] = node.children[i];
     }
   }
-};
+}
 
 export const TYPES = {
   BFS: 'BFS',
