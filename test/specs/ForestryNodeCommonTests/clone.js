@@ -9,7 +9,7 @@ export default (ctx, setup, getData, setData) => {
   const testclone = (t, root, reducer) => {
     const cloned = root.clone();
     t.is(root.reduce(reducer, ''), cloned.reduce(reducer, ''));
-    setData(cloned.children[0], 'WOOGLES');
+    setData(cloned.getChildren()[0], 'WOOGLES');
     t.not(root.reduce(reducer, ''), cloned.reduce(reducer, ''));
   };
 

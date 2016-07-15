@@ -11,18 +11,18 @@ export default (ctx, setup, getData) => {
     t.deepEqual(
       nodes,
       [
-        root.children[0],
-        root.children[0].children[1],
-        root.children[1]
+        root.getChildren()[0],
+        root.getChildren()[0].getChildren()[1],
+        root.getChildren()[1]
       ]
     );
     nodes = root.filter(filterPred, TRAVERSAL_TYPES.BFS);
     t.deepEqual(
       nodes,
       [
-        root.children[0],
-        root.children[1],
-        root.children[0].children[1]
+        root.getChildren()[0],
+        root.getChildren()[1],
+        root.getChildren()[0].getChildren()[1]
       ]
     );
   });

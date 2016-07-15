@@ -6,13 +6,13 @@ export default (ctx, setup) => {
   test(`${ctx} : returns index of node within parent\'s children`, t => {
     t.plan(2);
     const root = setup(simpleDataGen);
-    t.is(root.children[1].index, 1);
-    t.is(root.children[0].index, 0);
+    t.is(root.getChildren()[1].getIndex(), 1);
+    t.is(root.getChildren()[0].getIndex(), 0);
   });
 
   test(`${ctx} : returns null if node has no parent`, t => {
     t.plan(1);
     const root = setup(simpleDataGen);
-    t.is(root.index, null);
+    t.is(root.getIndex(), null);
   });
 };

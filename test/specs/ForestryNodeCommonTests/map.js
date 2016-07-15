@@ -25,7 +25,7 @@ export default (ctx, setup, getData, setData) => {
     const mapped = root.map(node => {
       return {
         data: getData(node),
-        children: node.children
+        children: node.getChildren()
       };
     });
     t.deepEqual(mapped, {

@@ -7,21 +7,21 @@ export default (ctx, setup) => {
     const root = setup(simpleDataGen);
     let captured = [];
     const op = node => captured.push(node);
-    root.children[0].children[0].climb(op);
+    root.getChildren()[0].getChildren()[0].climb(op);
     t.deepEqual(
       captured,
       [
-        root.children[0].children[0],
-        root.children[0],
+        root.getChildren()[0].getChildren()[0],
+        root.getChildren()[0],
         root
       ]);
 
     captured = [];
-    root.children[1].climb(op);
+    root.getChildren()[1].climb(op);
     t.deepEqual(
       captured,
       [
-        root.children[1],
+        root.getChildren()[1],
         root
       ]);
   });

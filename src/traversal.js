@@ -9,8 +9,8 @@ const breadthFirstOp = (node, op) => {
     if (op(node) === null) {
       break;
     }
-    for (i = -1, l = node.children.length; ++i < l;) {
-      arr[++len] = node.children[i];
+    for (i = -1, l = node.getChildren().length; ++i < l;) {
+      arr[++len] = node.getChildren()[i];
     }
   }
 };
@@ -24,8 +24,8 @@ const depthFirstOpPre = (node, op) => {
     if (op(node) === null) {
       break;
     }
-    for (i = node.children.length; --i >= 0;) {
-      arr[++idx] = node.children[i];
+    for (i = node.getChildren().length; --i >= 0;) {
+      arr[++idx] = node.getChildren()[i];
     }
   }
 };
@@ -37,7 +37,7 @@ const depthFirstOpPost = (node, op) => {
   let idx = 0;
   while (idx >= 0) {
     node = arr[idx];
-    if (lastParent === node || node.children.length === 0) {
+    if (lastParent === node || node.getChildren().length === 0) {
       --idx;
       lastParent = node.parent;
       if (op(node) === null) {
@@ -45,8 +45,8 @@ const depthFirstOpPost = (node, op) => {
       }
       continue;
     }
-    for (i = node.children.length; --i >= 0;) {
-      arr[++idx] = node.children[i];
+    for (i = node.getChildren().length; --i >= 0;) {
+      arr[++idx] = node.getChildren()[i];
     }
   }
 };

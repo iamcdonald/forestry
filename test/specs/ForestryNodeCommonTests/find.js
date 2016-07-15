@@ -6,14 +6,14 @@ export default (ctx, setup, getData) => {
   ctx = `${ctx} : find`;
   test(`${ctx} : returns node matching passed in pred`, t => {
     const root = setup(simpleDataGen);
-    t.deepEqual(root.find(node => /^five/.test(getData(node))), root.children[0].children[1]);
-    t.deepEqual(root.find(node => /^three/.test(getData(node))), root.children[1]);
+    t.deepEqual(root.find(node => /^five/.test(getData(node))), root.getChildren()[0].getChildren()[1]);
+    t.deepEqual(root.find(node => /^three/.test(getData(node))), root.getChildren()[1]);
   });
 
   test(`${ctx} : returns first node matching passed in pred`, t => {
     const root = setup(simpleDataGen);
     t.deepEqual(root.find(node => /-hundred/.test(getData(node)), TRAVERSAL_TYPES.DFS_PRE), root);
-    t.deepEqual(root.find(node => /-hundred/.test(getData(node)), TRAVERSAL_TYPES.DFS_POST), root.children[0].children[0]);
+    t.deepEqual(root.find(node => /-hundred/.test(getData(node)), TRAVERSAL_TYPES.DFS_POST), root.getChildren()[0].getChildren()[0]);
   });
 
   test(`${ctx} : returns null if no nodes match term`, t => {

@@ -1,0 +1,13 @@
+export { default as getIndex } from './getIndex';
+export { default as isRoot } from './isRoot';
+export { default as isLeaf } from './isLeaf';
+export { default as climb } from './climb';
+export { default as getLevel } from './getLevel';
+export { default as addChild } from './addChild';
+export { default as remove } from './remove';
+export { default as traverse } from './traverse';
+export { default as find } from './find';
+export { default as filter } from './filter';
+export { default as reduce } from './reduce';
+export { default as clone } from './clone';
+export { default as map } from './map';

@@ -1,39 +1,100 @@
 import { TYPES as TRAVERSAL_TYPES } from './traversal';
 import { default as Node } from './Node';
 import cloneData from './utils/cloneData';
+import * as operations from './node/operations';
 export { Node, TRAVERSAL_TYPES };
 
-export default class Forestry extends Node {
+const isForestry = node => node instanceof Forestry;
+const forestryNodeTypesEqual = (a, b) => {
+	return isForestry(a) && isForestry(b) && a._childrenProp === b._childrenProp;
+}
+
+const updateChildrenWrapState = (node, children) => {
+	node._shouldWrapChildState = children.map(child => forestryNodeTypesEqual(node, child))
+}
+
+const initChildrenWrapState = node => {
+	const children = node.data[node._childrenProp] || [];
+	node._shouldWrapChildState = children.map(() => true);
+}
+
+export default class Forestry {
+
+	data = null;
+  parent = null;
 
   constructor(data, childrenProp, parent = null) {
-    super(data, parent);
+		this.data = data;
+    this.parent = parent;
     this._childrenProp = childrenProp;
-    this._children = this.children.map(() => true);
+		initChildrenWrapState(this);
   }
 
-  get children() {
+  getChildren() {
     const children = this.data[this._childrenProp] || [];
-    return children.map((child, idx) => this._children[idx] ? new Forestry(child, this._childrenProp, this) : child);
+    return children.map((child, idx) =>  this._shouldWrapChildState[idx] ? new Forestry(child, this._childrenProp, this) : child);
   }
 
-  set children(children) {
-    this._children = children.map(child => child instanceof Forestry && child._childrenProp === this._childrenProp);
-    this.data[this._childrenProp] = children.map((child, idx) => this._children[idx] ? child.data : child);
+  setChildren(children) {
+		updateChildrenWrapState(this, children);
+    this.data[this._childrenProp] = children.map((child, idx) => this._shouldWrapChildState[idx] ? child.data : child);
   }
 
-  addChild(...children) {
-    children = children.map(child => {
-      if (child instanceof Node) {
-        child.parent = this;
-        return child;
-      }
-      return new Forestry(child, this._childrenProp, this);
-    });
-    this.children = this.children.concat(children);
+	copy() {
+		return new Forestry(cloneData(this.data, this._childrenProp), this._childrenProp);
+	}
+
+  getIndex() {
+		return operations.getIndex(this);
   }
 
-  _clone() {
-    return new Forestry(cloneData(this.data, this._childrenProp), this._childrenProp);
+  isRoot() {
+    return operations.isRoot(this);
+  }
+
+  isLeaf() {
+		return operations.isLeaf(this);
+  }
+
+  getLevel() {
+		return operations.getLevel(this);
+  }
+
+  climb(op, acc) {
+		return operations.climb(this, op, acc);
+  }
+
+  addChild(... children) {
+		const wrapData = childData => new Forestry(childData, this._childrenProp, this);
+		operations.addChild(this, children, wrapData);
+  }
+
+  remove() {
+		return operations.remove(this);
+  }
+
+  traverse(op, TRAVERSAL_TYPE) {
+		operations.traverse(this, op, TRAVERSAL_TYPE)
+  }
+
+  find(term, TRAVERSAL_TYPE) {
+		return operations.find(this, term, TRAVERSAL_TYPE);
+  }
+
+  filter(term, TRAVERSAL_TYPE) {
+		return operations.filter(this, term, TRAVERSAL_TYPE);
+  }
+
+  reduce(op, acc, TRAVERSAL_TYPE) {
+		return operations.reduce(this, op, acc, TRAVERSAL_TYPE);
+  }
+
+  map(op) {
+		return operations.map(this.clone(), op);
+  }
+
+  clone() {
+		return operations.clone(this);
   }
 
 }
